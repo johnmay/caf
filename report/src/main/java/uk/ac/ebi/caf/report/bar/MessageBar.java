@@ -66,10 +66,9 @@ public class MessageBar
 
     private static final Logger LOGGER = Logger.getLogger(MessageBar.class);
 
-    private final ImageIcon warningIcon = ResourceUtility.getIcon("images/cutout/warning_16x16.png");
+    private final ImageIcon warningIcon = ResourceUtility.getIcon(MessageBar.class, "warning_16x16.png");
 
-    private final ImageIcon errorIcon =
-                            ResourceUtility.getIcon("images/cutout/error_16x16.png");
+    private final ImageIcon errorIcon = ResourceUtility.getIcon(MessageBar.class, "error_16x16.png");
 
     private final Color WARN_LOW = new Color(240, 240, 30);
 
