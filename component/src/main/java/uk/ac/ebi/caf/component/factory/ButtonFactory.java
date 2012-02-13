@@ -20,9 +20,13 @@ package uk.ac.ebi.caf.component.factory;
 
 import com.jgoodies.forms.factories.Borders;
 import javax.swing.Action;
+import javax.swing.Icon;
 import javax.swing.JButton;
+import javax.swing.SwingConstants;
 
 import javax.swing.plaf.basic.BasicButtonUI;
+import uk.ac.ebi.caf.component.theme.ThemeManager;
+
 
 /**
  *          ButtonFactory - 2011.12.12 <br>
@@ -48,6 +52,7 @@ public final class ButtonFactory {
         return new JButton(action);
     }
 
+
     /**
      * Creates a button with the associated action and specified text
      * @param text title to display on button
@@ -61,6 +66,7 @@ public final class ButtonFactory {
         return button;
     }
 
+
     /**
      * Creates a 'clean' button with null background color and
      * an empty border. This is useful for buttons that will only
@@ -70,10 +76,32 @@ public final class ButtonFactory {
      * @return new button instance
      */
     public static JButton newCleanButton(Action action) {
+        return newCleanButton(action, SwingConstants.CENTER);
+    }
+
+
+    public static JButton newCleanButton(Action action, int alignment) {
         JButton button = newButton(action);
         button.setUI(new BasicButtonUI());
+        button.setFont(ThemeManager.getInstance().getTheme().getBodyFont());
+        button.setHorizontalAlignment(alignment);
         button.setBorder(Borders.EMPTY_BORDER);
         button.setBackground(null);
+        return button;
+    }
+
+
+    /**
+     * Creates a 'clean' button with null background color and
+     * an empty border. This is useful for buttons that will only
+     * use an image and no text. 
+     * @param icon the icon to place on the button
+     * @param action the action to perform
+     * @return new button instance
+     */
+    public static JButton newCleanButton(Icon icon, Action action) {
+        JButton button = newCleanButton(action);
+        button.setIcon(icon);
         return button;
     }
 }

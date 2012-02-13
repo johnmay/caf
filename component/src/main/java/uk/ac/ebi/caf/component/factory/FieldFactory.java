@@ -25,6 +25,7 @@ import org.apache.log4j.Logger;
 import uk.ac.ebi.caf.component.theme.Theme;
 import uk.ac.ebi.caf.component.theme.ThemeManager;
 
+
 /**
  *          FieldFactory - 2011.11.17 <br>
  *          Class description
@@ -35,14 +36,18 @@ import uk.ac.ebi.caf.component.theme.ThemeManager;
 public class FieldFactory {
 
     private static final Logger LOGGER = Logger.getLogger(FieldFactory.class);
+
     private static Theme theme = ThemeManager.getInstance().getTheme();
 
+
     public static JTextField newField(int columns) {
-        JTextField field = new JTextField(columns);
+        JTextField field = new JTextField();
         field.setFont(theme.getBodyFont());
         field.setForeground(theme.getForeground());
+        field.setColumns(columns);
         return field;
     }
+
 
     public static JTextField newField(String text) {
         JTextField field = new JTextField(text);
@@ -50,6 +55,7 @@ public class FieldFactory {
         field.setForeground(theme.getForeground());
         return field;
     }
+
 
     public static JTextField newTransparentField(int columns) {
         JTextField field = new JTextField(columns);
@@ -59,6 +65,7 @@ public class FieldFactory {
         field.setBorder(null);
         return field;
     }
+
 
     public static JTextField newTransparentField(int columns, boolean editable) {
         JTextField field = newTransparentField(columns);
