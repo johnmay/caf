@@ -20,9 +20,7 @@ package uk.ac.ebi.caf.component;
  * You should have received a copy of the GNU Lesser General Public License
  * along with CheMet.  If not, see <http://www.gnu.org/licenses/>.
  */
-import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.security.InvalidParameterException;
@@ -106,6 +104,12 @@ public abstract class ExpandingComponentList<C extends JComponent> {
 
     public void setRestrict(boolean restrict) {
         this.restrict = restrict;
+    }
+
+
+    public void reset() {
+        setSize(0);
+        append();
     }
 
 
@@ -268,17 +272,16 @@ public abstract class ExpandingComponentList<C extends JComponent> {
             component.setVisible(true);
         }
 
-
-        // should only need to do this... can't add in front of first component
         if (!spacers.isEmpty()) {
             spacers.get(0).setVisible(false);
         }
 
+        box.revalidate();
+
         if (window != null) {
             window.pack();
+            window.repaint();
         }
-        box.repaint();
-
 
     }
 
@@ -314,23 +317,17 @@ public abstract class ExpandingComponentList<C extends JComponent> {
         if (components.size() == 1 && restrict) {
             subtract.get(0).setEnabled(false);
         }
-        if (subtract.size() > 1) {
-            subtract.get(0).setEnabled(true);
-        }
+
+        subtract.get(0).setEnabled(true);
+        spacers.get(0).setVisible(false);
 
 
-        for (JComponent component : spacers) {
-            component.setVisible(true);
-        }
-        if (!spacers.isEmpty()) {
-            spacers.get(0).setVisible(false);
-        }
-
+        box.revalidate();
 
         if (window != null) {
             window.pack();
+            window.repaint();
         }
-        box.repaint();
 
     }
 
