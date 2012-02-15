@@ -24,12 +24,14 @@ import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.font.TextAttribute;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import org.apache.log4j.Logger;
@@ -38,6 +40,7 @@ import uk.ac.ebi.caf.component.theme.ThemeManager;
 import uk.ac.ebi.caf.component.ui.VerticalLabelUI;
 import uk.ac.ebi.caf.utility.ColorUtility;
 import uk.ac.ebi.caf.utility.TextUtility;
+
 
 /**
  * @name    LabelFactory - 2011.10.08 <br>
@@ -49,12 +52,16 @@ import uk.ac.ebi.caf.utility.TextUtility;
 public class LabelFactory {
 
     private static final Logger LOGGER = Logger.getLogger(LabelFactory.class);
+
     private static Theme theme = ThemeManager.getInstance().getTheme();
+
     public static JLabel empty = LabelFactory.newLabel("");
+
 
     public static JLabel emptyLabel() {
         return empty;
     }
+
 
     public enum Size {
 
@@ -62,16 +69,32 @@ public class LabelFactory {
         NORMAL(12.0f),
         LARGE(14.0f),
         HUGE(16.0f);
+
         private final float size;
+
 
         private Size(float size) {
             this.size = size;
         }
     };
 
+
+    public static JLabel newLabel(BufferedImage image) {
+        return newLabel(new ImageIcon(image));
+    }
+
+
+    public static JLabel newLabel(ImageIcon icon) {
+        JLabel label = newLabel("");
+        label.setIcon(icon);
+        return label;
+    }
+
+
     public static JLabel newLabel(String text) {
         return newLabel(text, Size.NORMAL);
     }
+
 
     public static JLabel newLabel(String text, Size size) {
 
@@ -83,6 +106,7 @@ public class LabelFactory {
 
     }
 
+
     /**
      * Wraps the text in {@code <HTML>} tags
      * @param text
@@ -91,6 +115,7 @@ public class LabelFactory {
     public static JLabel newHTMLLabel(String text) {
         return newLabel(TextUtility.html(text));
     }
+
 
     /**
      * Returns a right aligned label
@@ -104,6 +129,7 @@ public class LabelFactory {
         return label;
     }
 
+
     /**
      * Returns a new form label (right aligned) with the option of adding tool tip text
      * @param text
@@ -115,6 +141,7 @@ public class LabelFactory {
         label.setToolTipText(tooltip);
         return label;
     }
+
 
     /**
      * Creates a label that when clicked opens the web browser on the provided
@@ -145,11 +172,13 @@ public class LabelFactory {
                         }
                     }
 
+
                     @Override
                     public void mouseEntered(MouseEvent e) {
                         label.setCursor(new Cursor(Cursor.HAND_CURSOR));
                         label.setFont(hover);
                     }
+
 
                     @Override
                     public void mouseExited(MouseEvent e) {
@@ -161,6 +190,7 @@ public class LabelFactory {
         return label;
     }
 
+
     public static JLabel newHyperlinkLabel(URL url, String text) {
         try {
             return newHyperlinkLabel(url.toURI(), text);
@@ -169,6 +199,7 @@ public class LabelFactory {
         }
         return newLabel(text);
     }
+
 
     public static JLabel newHyperlinkLabel(String address, String text) {
         try {
@@ -180,12 +211,14 @@ public class LabelFactory {
 
     }
 
+
     public static JLabel newVerticalLabel(String text,
                                           VerticalLabelUI.Rotation rotation) {
         JLabel label = newLabel(text);
         label.setUI(new VerticalLabelUI(rotation));
         return label;
     }
+
 
     public static JLabel newVerticalFormLabel(String text,
                                               VerticalLabelUI.Rotation rotation) {
