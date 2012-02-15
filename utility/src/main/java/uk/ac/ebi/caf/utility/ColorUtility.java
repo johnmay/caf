@@ -21,6 +21,7 @@ package uk.ac.ebi.caf.utility;
 import java.awt.Color;
 import org.apache.log4j.Logger;
 
+
 /**
  * @name    ColorUtilities - 2011.10.11 <br>
  *          Class description
@@ -31,10 +32,17 @@ import org.apache.log4j.Logger;
 public class ColorUtility {
 
     private static final Logger LOGGER = Logger.getLogger(ColorUtility.class);
+
     public static Color EMBL_PETROL = new Color(Integer.parseInt("006666", 16));
+
+    public static Color EMBL_PETROL_75 = new Color(Integer.parseInt("408c8c", 16));
+
     public static Color CLEAR = new Color(0, 0, 0, 0);
+
     public static Color CLEAR_BLACK = new Color(0, 0, 0, 0);
+
     public static Color CLEAR_WHITE = new Color(255, 255, 255, 0);
+
 
     /**
      * Shades a colour by the given amount (0-1). A positive value will lighten the colour whilst a negative value
@@ -55,6 +63,7 @@ public class ColorUtility {
 
     }
 
+
     /**
      * Mixes two colour by the provided percentages
      * @param color1
@@ -71,6 +80,7 @@ public class ColorUtility {
         }
         return new Color(clr1[0], clr1[1], clr1[2], clr1[3]);
     }
+
 
     /**
      * Returns white or black text depending on the background.
