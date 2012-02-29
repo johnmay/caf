@@ -50,4 +50,16 @@ public class ComboBoxFactory {
         combobox.setForeground(theme.getForeground());
         return combobox;
     }
+
+
+    /**
+     * Create an empty combo box
+     * @return 
+     */
+    public static JComboBox newComboBox() {
+        JComboBox combobox = new JComboBox();
+        combobox.setFont(theme.getBodyFont());
+        combobox.setForeground(theme.getForeground());
+        return combobox;
+    }
 }

@@ -58,7 +58,7 @@ public class PreferencePanelFactory {
 
     public static JComponent getPreferencePanel(Collection<Preference> descriptors) {
 
-        JComponent component = PanelFactory.createDialogPanel();
+        JComponent component = PanelFactory.createInfoPanel();
         FormLayout layout = new FormLayout("p, 4dlu, p", "p");
         component.setLayout(layout);
 
@@ -119,7 +119,7 @@ public class PreferencePanelFactory {
 
         final JSpinner spinner = new JSpinner(model);
 
-        spinner.setPreferredSize(new Dimension(64, spinner.getPreferredSize().height));
+       // spinner.setPreferredSize(new Dimension(64, spinner.getPreferredSize().height));
 
 
 
@@ -134,7 +134,6 @@ public class PreferencePanelFactory {
 
             public void update() {
                 if (!preference.get().equals(spinner.getValue())) {
-                    System.out.println("font size updated");
                     preference.put((Integer) model.getValue());
                 }
             }

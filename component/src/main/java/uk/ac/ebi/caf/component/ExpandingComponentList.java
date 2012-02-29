@@ -20,8 +20,7 @@ package uk.ac.ebi.caf.component;
  * You should have received a copy of the GNU Lesser General Public License
  * along with CheMet.  If not, see <http://www.gnu.org/licenses/>.
  */
-import java.awt.Component;
-import java.awt.Window;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.security.InvalidParameterException;
 import java.util.LinkedList;
@@ -93,7 +92,14 @@ public abstract class ExpandingComponentList<C extends JComponent> {
         // control axis is at a right-angle to normal axis        
         this.controlAxis = axis == BoxLayout.LINE_AXIS ? BoxLayout.PAGE_AXIS : BoxLayout.LINE_AXIS;
         this.window = window;
+        
+        box.setOpaque(true);
+        box.setBackground(Color.WHITE);
 
+    }
+    
+    public void setBackground(Color color){
+        box.setBackground(color);
     }
 
 
@@ -200,6 +206,8 @@ public abstract class ExpandingComponentList<C extends JComponent> {
         spacers.add(index, newSpacer());
         pair.add(spacers.get(index));
         pair.add(row);
+
+
         return pair;
     }
 
@@ -218,6 +226,8 @@ public abstract class ExpandingComponentList<C extends JComponent> {
         return new JComponent() {
         };
     }
+
+
 
 
     /**
@@ -335,7 +345,8 @@ public abstract class ExpandingComponentList<C extends JComponent> {
     public JButton newAppendButton(final C component) {
 
         return ButtonFactory.newCleanButton(ResourceUtility.getIcon(ExpandingComponentList.class, "plus_12x12.png"),
-                                            newAppendAction(component));
+                                            newAppendAction(component),
+                                            box.getBackground());
     }
 
 
@@ -351,7 +362,8 @@ public abstract class ExpandingComponentList<C extends JComponent> {
 
     public JButton newSubtractButton(final C component) {
         return ButtonFactory.newCleanButton(ResourceUtility.getIcon(ExpandingComponentList.class, "minus_12x12.png"),
-                                            newSubtractAction(component));
+                                            newSubtractAction(component),
+                                            box.getBackground());
     }
 
 
