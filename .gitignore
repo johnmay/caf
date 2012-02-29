@@ -6,6 +6,8 @@
 
 component/caf-component.iml
 
+.DS_Store
+
 caf.iml
 
 utility/caf-utility.iml
