@@ -82,6 +82,12 @@ public class SuggestDialog extends JDialog {
         }
     }
 
+    @Override
+    public void setVisible(boolean visible){
+        boolean hasSuggestions = list.getModel().getSize() != 0;
+        super.setVisible(visible && hasSuggestions);
+    }
+
     public boolean hasSelection() {
         return list.getSelectedIndex() != -1;
     }
