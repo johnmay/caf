@@ -38,7 +38,7 @@ public class SuggestionField extends JTextField {
 
         setFont(ThemeManager.getInstance().getTheme().getBodyFont());
         setForeground(ThemeManager.getInstance().getTheme().getForeground());
-        
+
         dialog = new SuggestDialog(window, this, suggestionHandler);
         final JTextField component = this;
 
@@ -54,15 +54,22 @@ public class SuggestionField extends JTextField {
                 dialog.previous();
             }
         });
-        getInputMap().put(KeyStroke.getKeyStroke("ENTER"), new AbstractAction() {
+        getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE,
+                                                 InputEvent.CTRL_MASK), new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
 
                 dialog.setVisible(!dialog.isVisible()); // toggle
 
-                if(dialog.hasSelection()){
+                if (dialog.hasSelection()) {
                     replacementHandler.replace(component, dialog.getSelection());
                 }
+            }
+        });
+        getInputMap().put(KeyStroke.getKeyStroke("ESCAPE"), new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dialog.setVisible(false);
             }
         });
 
@@ -87,23 +94,23 @@ public class SuggestionField extends JTextField {
                 dialog.setVisible(true);
             }
         };
-        
+
         getDocument().addDocumentListener(listener);
 
     }
 
-    public void replaceWithSuggestion(Object object){
+    public void replaceWithSuggestion(Object object) {
         setText(object.toString());
     }
-    
-    public void setSuggest(boolean suggest){
-        if(this.suggest == suggest){
+
+    public void setSuggest(boolean suggest) {
+        if (this.suggest == suggest) {
             return; // not changed
         }
         this.suggest = suggest;
-        if(suggest){
+        if (suggest) {
             getDocument().addDocumentListener(listener);
-        }else {
+        } else {
             getDocument().removeDocumentListener(listener);
         }
     }
