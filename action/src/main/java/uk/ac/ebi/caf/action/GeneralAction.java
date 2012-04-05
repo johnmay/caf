@@ -18,15 +18,12 @@
  */
 package uk.ac.ebi.caf.action;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.ImageIcon;
-import javax.swing.KeyStroke;
+import javax.swing.*;
+import java.awt.*;
 
 
 /**
  * GeneralAction.java
- *
  *
  * @author johnmay
  * @date Apr 8, 2011
@@ -46,13 +43,13 @@ public abstract class GeneralAction extends AbstractAction {
     public static final String EXPAND_BUTTON_CLOSE_ICON = "CloseIcon";
 
     private String[] actionValues = new String[]{
-        Action.NAME,
-        Action.SHORT_DESCRIPTION,
-        Action.ACCELERATOR_KEY,
-        Action.LARGE_ICON_KEY,
-        GeneralAction.PROJECT_REQUIRMENTS,
-        EXPAND_BUTTON_OPEN_ICON,
-        EXPAND_BUTTON_CLOSE_ICON // old use two different buttons and switch between them with setVisible
+            Action.NAME,
+            Action.SHORT_DESCRIPTION,
+            Action.ACCELERATOR_KEY,
+            Action.LARGE_ICON_KEY,
+            GeneralAction.PROJECT_REQUIRMENTS,
+            EXPAND_BUTTON_OPEN_ICON,
+            EXPAND_BUTTON_CLOSE_ICON // old use two different buttons and switch between them with setVisible
     };
 
 
@@ -71,6 +68,7 @@ public abstract class GeneralAction extends AbstractAction {
     /**
      * Constructor loads the properties from action.properties (ActionProperties)
      * given the command name
+     *
      * @param command
      */
     public GeneralAction(String command) {
@@ -79,8 +77,8 @@ public abstract class GeneralAction extends AbstractAction {
 
 
         for (String actionValue : actionValues) {
-            String action = actionProperties.getProperty(command + ".Action." + actionValue);
-            setLoadedValue(actionValue, action);
+            String value = actionProperties.getProperty(command + ".Action." + actionValue);
+            setLoadedValue(actionValue, value);
         }
     }
 
@@ -88,28 +86,35 @@ public abstract class GeneralAction extends AbstractAction {
     /**
      * Set the loaded values of the key. If the key is ACCELERATOR_KEY then the
      * newValue is automatically cast to a KeyStroke.
-     * @param key Action.NAME, Action.SHORT_DESCRIPTION etc...
-     * @param propertyValue
+     *
+     * @param key   Action.NAME, Action.SHORT_DESCRIPTION etc...
+     * @param value
      */
-    private void setLoadedValue(String key, Object propertyValue) {
+    private void setLoadedValue(String key, String value) {
 
-        if (key == null || propertyValue == null) {
+        if (key == null || value == null) {
             return;
         }
 
-
         if (key.equals(GeneralAction.PROJECT_REQUIRMENTS)) {
-            putValue(key, propertyValue.toString());
+            putValue(key, value);
         } else if (key.equals(Action.LARGE_ICON_KEY)) {
-            putValue(key, getIcon(propertyValue.toString()));
+            putValue(key, getIcon(value));
+        } else if (key.equals(Action.ACCELERATOR_KEY)) {
+            putValue(key, resolveKeystroke(value));
         } else {
-            Object alteredvalue = key.equals(Action.ACCELERATOR_KEY) ? KeyStroke.getKeyStroke(
-                    (String) propertyValue) : propertyValue;
-            putValue(key, alteredvalue);
+            putValue(key, value);
         }
 
     }
 
+    public static KeyStroke resolveKeystroke(String value) {
+        if(value.contains("<mask>")){
+            KeyStroke stroke = KeyStroke.getKeyStroke(value.replaceAll("\\<mask\\>", ""));
+            return KeyStroke.getKeyStroke(stroke.getKeyCode(), stroke.getModifiers() + Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
+        }
+        return KeyStroke.getKeyStroke(value);
+    }
 
     private ImageIcon getIcon(String path) {
 
