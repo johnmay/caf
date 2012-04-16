@@ -38,7 +38,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import java.awt.event.ActionEvent;
+import java.awt.event.*;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -60,6 +60,13 @@ public class PreferencePanelFactory {
 
     private static final CellConstraints cc = new CellConstraints();
 
+    private static final AbstractAction DO_NOTHING = new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+
+        }
+    };
+
 
     public static JComponent getPreferencePanel(Collection<Preference> descriptors) {
 
@@ -80,14 +87,20 @@ public class PreferencePanelFactory {
     }
 
     public static JComponent getPreferencePanel(Preference... descriptors) {
+        return getPreferencePanel(descriptors, new Action[descriptors.length]);
+    }
+
+    public static JComponent getPreferencePanel(Preference[] descriptors, Action[] actions) {
 
         JComponent component = PanelFactory.createInfoPanel();
         FormLayout layout = new FormLayout("p, 4dlu, p:grow, 4dlu, min", "p");
         component.setLayout(layout);
 
-
-        for (Preference pref : descriptors) {
-            getPreferenceEditor(pref, component, layout);
+        for (int i = 0; i < descriptors.length; i++) {
+            getPreferenceEditor(descriptors[i],
+                                component,
+                                actions[i] != null ? actions[i] : DO_NOTHING,
+                                layout);
         }
 
         component.setBorder(Borders.DLU4_BORDER);
@@ -98,21 +111,41 @@ public class PreferencePanelFactory {
     }
 
 
+    public static JComponent getPreferenceEditor(Preference preference,
+                                                 Action onFocusLost) {
+        return getPreferencePanel(new Preference[]{preference},
+                                  new Action[]{onFocusLost});
+    }
+
     public static void getPreferenceEditor(Preference preference,
                                            JComponent component,
                                            FormLayout layout) {
+        getPreferenceEditor(preference, component, DO_NOTHING, layout);
+    }
+
+    public static void getPreferenceEditor(Preference preference,
+                                           JComponent component,
+                                           Action onFocusLost,
+                                           FormLayout layout) {
         if (preference instanceof StringPreference) {
-            getPreferenceEditor((StringPreference) preference, component, layout);
+            getPreferenceEditor((StringPreference) preference, component, onFocusLost, layout);
         } else if (preference instanceof IntegerPreference) {
-            getPreferenceEditor((IntegerPreference) preference, component, layout);
+            getPreferenceEditor((IntegerPreference) preference, component, onFocusLost, layout);
         } else if (preference instanceof FilePreference) {
-            getPreferenceEditor((FilePreference) preference, component, layout);
+            getPreferenceEditor((FilePreference) preference, component, onFocusLost, layout);
         }
     }
 
 
     public static void getPreferenceEditor(final IntegerPreference preference,
-                                           JComponent component,
+                                           final JComponent component,
+                                           FormLayout layout) {
+        getPreferenceEditor(preference, component, DO_NOTHING, layout);
+    }
+
+    public static void getPreferenceEditor(final IntegerPreference preference,
+                                           final JComponent component,
+                                           final Action onFocusLost,
                                            FormLayout layout) {
 
         final JLabel label = LabelFactory.newFormLabel(preference.getName(),
@@ -143,11 +176,21 @@ public class PreferencePanelFactory {
                 }
             }
         });
+
+        addFocusLostAction(spinner, onFocusLost, preference);
+
+
     }
 
+    public static void getPreferenceEditor(final StringPreference preference,
+                                           final JComponent component,
+                                           FormLayout layout) {
+        getPreferenceEditor(preference, component, DO_NOTHING, layout);
+    }
 
     public static void getPreferenceEditor(final StringPreference preference,
-                                           JComponent component,
+                                           final JComponent component,
+                                           final Action onFocusLost,
                                            FormLayout layout) {
 
 
@@ -160,6 +203,7 @@ public class PreferencePanelFactory {
         component.add(field, cc.xy(3, layout.getRowCount()));
         layout.appendRow(new RowSpec(Sizes.DLUY4));
         layout.appendRow(new RowSpec(Sizes.PREFERRED));
+
 
         field.getDocument().addDocumentListener(new DocumentListener() {
             @Override
@@ -187,13 +231,23 @@ public class PreferencePanelFactory {
             }
         });
 
+        addFocusLostAction(field, onFocusLost, preference);
+
     }
 
-    
-    private static JFileChooser chooser = new JFileChooser();
+
+    private static final JFileChooser chooser = new JFileChooser();
 
     public static void getPreferenceEditor(final FilePreference preference,
                                            final JComponent component,
+                                           FormLayout layout) {
+        getPreferenceEditor(preference, component, DO_NOTHING, layout);
+    }
+
+
+    public static void getPreferenceEditor(final FilePreference preference,
+                                           final JComponent component,
+                                           final Action onFocusLost,
                                            FormLayout layout) {
 
 
@@ -207,18 +261,19 @@ public class PreferencePanelFactory {
                 chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
                 chooser.setSelectedFile(preference.get());
                 int choice = chooser.showOpenDialog(component);
-                if(choice == JFileChooser.APPROVE_OPTION){
+                if (choice == JFileChooser.APPROVE_OPTION) {
                     field.setText(chooser.getSelectedFile().getAbsolutePath());
+                    onFocusLost.actionPerformed(new ActionEvent(preference, ActionEvent.ACTION_PERFORMED, "File Choosen"));
                 }
             }
         });
-        
+
         component.add(label, cc.xy(1, layout.getRowCount()));
         component.add(field, cc.xy(3, layout.getRowCount()));
         component.add(browse, cc.xy(5, layout.getRowCount()));
         layout.appendRow(new RowSpec(Sizes.DLUY4));
         layout.appendRow(new RowSpec(Sizes.PREFERRED));
-        
+
 
         field.getDocument().addDocumentListener(new DocumentListener() {
             @Override
@@ -243,7 +298,30 @@ public class PreferencePanelFactory {
             }
         });
 
+        component.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusLost(FocusEvent e) {
+                // XXX need to stop browse triggering change
+                if (!browse.isSelected()) {
+                    onFocusLost.actionPerformed(new ActionEvent(preference,
+                                                                ActionEvent.ACTION_PERFORMED,
+                                                                "Object lost focus"));
+                }
+            }
+        });
 
+    }
+
+    public static void addFocusLostAction(final JComponent component, final Action action, final Object obj) {
+
+        component.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusLost(FocusEvent e) {
+                action.actionPerformed(new ActionEvent(obj,
+                                                       ActionEvent.ACTION_PERFORMED,
+                                                       "Object lost focus"));
+            }
+        });
     }
 
 
