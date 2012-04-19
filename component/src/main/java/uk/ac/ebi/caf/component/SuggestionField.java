@@ -1,7 +1,6 @@
 package uk.ac.ebi.caf.component;
 
 import org.apache.log4j.Logger;
-import uk.ac.ebi.caf.component.factory.LabelFactory;
 import uk.ac.ebi.caf.component.theme.ThemeManager;
 
 import javax.swing.*;
@@ -70,6 +69,19 @@ public class SuggestionField extends JTextField {
             @Override
             public void actionPerformed(ActionEvent e) {
                 dialog.setVisible(false);
+            }
+        });
+
+        dialog.getList().addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                // could simply check for hasSelection() but a user may click the list
+                // and not select an item...
+                int index = dialog.getList().locationToIndex(e.getPoint());
+                if (index != -1) {
+                    dialog.setVisible(!dialog.isVisible());
+                    replacementHandler.replace(component, dialog.getSelection());
+                }
             }
         });
 

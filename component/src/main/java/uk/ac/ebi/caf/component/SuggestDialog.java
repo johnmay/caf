@@ -1,6 +1,5 @@
 package uk.ac.ebi.caf.component;
 
-import com.sun.awt.AWTUtilities;
 import org.apache.log4j.Logger;
 
 import javax.swing.*;
@@ -61,6 +60,10 @@ public class SuggestDialog extends JDialog {
             }
         });
 
+    }
+    
+    public JList getList(){
+        return list;
     }
     
     public void suggest(String text){
