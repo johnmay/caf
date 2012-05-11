@@ -100,7 +100,7 @@ public class LabelFactory {
 
         JLabel label = new JLabel(text);
         label.setForeground(theme.getForeground());
-        label.setFont(theme.getBodyFont().deriveFont(size.size));
+        label.setFont(theme.getBodyFont());
 
         return label;
 
@@ -125,7 +125,7 @@ public class LabelFactory {
     public static JLabel newFormLabel(String text) {
         JLabel label = newLabel(text);
         label.setHorizontalAlignment(SwingConstants.RIGHT);
-        label.setForeground(ColorUtility.shade(label.getForeground(), 0.2f));
+        label.setForeground(label.getForeground().brighter());
         return label;
     }
 
