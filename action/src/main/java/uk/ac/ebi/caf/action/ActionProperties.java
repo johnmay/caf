@@ -18,6 +18,8 @@
  */
 package uk.ac.ebi.caf.action;
 
+import org.apache.log4j.Logger;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -25,13 +27,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.prefs.Preferences;
-import org.apache.log4j.Logger;
 
 
 /**
  * Singleton class to load action properties from a resource file
+ *
  * @author johnmay
- * @date   Apr 13, 2011
+ * @date Apr 13, 2011
  */
 public class ActionProperties
         extends Properties {
@@ -43,7 +45,8 @@ public class ActionProperties
 
     /**
      * Load the action properties for a given package (determined by class)
-     * @param location 
+     *
+     * @param location
      */
     private ActionProperties(Class location) {
 
@@ -51,7 +54,7 @@ public class ActionProperties
 
         if (url == null) {
             LOGGER.error("Could not open action properties for: "
-                         + location.getPackage() + " please make sure it exists");
+                                 + location.getPackage() + " please make sure it exists", new Exception());
             return;
         }
 
@@ -61,14 +64,15 @@ public class ActionProperties
             load(stream);
         } catch (IOException ex) {
             LOGGER.error("Could not open action properties for: "
-                         + location.getPackage(), ex);
+                                 + location.getPackage(), ex);
+
         } finally {
             if (stream != null) {
                 try {
                     stream.close();
                 } catch (IOException ex) {
                     LOGGER.error("Could not close action properties for: "
-                                 + location.getPackage(), ex);
+                                         + location.getPackage(), ex);
                 }
             }
         }
