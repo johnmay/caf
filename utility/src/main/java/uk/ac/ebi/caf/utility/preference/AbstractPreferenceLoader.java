@@ -20,16 +20,14 @@ package uk.ac.ebi.caf.utility.preference;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import java.io.File;
-import java.io.IOException;
-import uk.ac.ebi.caf.utility.preference.type.StringPreference;
-import java.io.InputStream;
-import java.lang.String;
-import java.util.*;
-import java.util.prefs.Preferences;
-import javax.swing.tree.DefaultMutableTreeNode;
 import org.apache.log4j.Logger;
 import uk.ac.ebi.caf.utility.preference.type.*;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.*;
+import java.util.prefs.Preferences;
 
 
 /**
@@ -77,8 +75,6 @@ public abstract class AbstractPreferenceLoader extends Properties {
         Set<String> keys = new HashSet<String>();
 
         for (Object key : keySet()) {
-
-            System.out.println("key:" + key);
 
             if (key instanceof String) {
                 String keyString = (String) key;
