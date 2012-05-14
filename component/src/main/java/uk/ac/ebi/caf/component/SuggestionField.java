@@ -65,6 +65,18 @@ public class SuggestionField extends JTextField {
                 }
             }
         });
+        getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,
+                                                 0), new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                dialog.setVisible(!dialog.isVisible()); // toggle
+
+                if (dialog.hasSelection()) {
+                    replacementHandler.replace(component, dialog.getSelection());
+                }
+            }
+        });
         getInputMap().put(KeyStroke.getKeyStroke("ESCAPE"), new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
