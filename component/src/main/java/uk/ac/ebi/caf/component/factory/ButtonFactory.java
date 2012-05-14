@@ -19,16 +19,9 @@
 package uk.ac.ebi.caf.component.factory;
 
 import com.jgoodies.forms.factories.Borders;
-
-import javax.swing.Action;
-import javax.swing.Icon;
-import javax.swing.JButton;
-import javax.swing.SwingConstants;
-
-import javax.swing.plaf.basic.BasicButtonUI;
-
 import uk.ac.ebi.caf.component.theme.ThemeManager;
 
+import javax.swing.*;
 import java.awt.*;
 
 
@@ -95,6 +88,7 @@ public final class ButtonFactory {
         button.setHorizontalAlignment(alignment);
         button.setBorderPainted(false);
         button.setFocusPainted(false);
+        button.setBorder(Borders.EMPTY_BORDER);
         button.setBackground(background);
         return button;
     }
@@ -113,6 +107,21 @@ public final class ButtonFactory {
     public static JButton newCleanButton(Icon icon, Action action) {
         JButton button = newCleanButton(action);
         button.setIcon(icon);
+        return button;
+    }
+
+    /**
+     * Creates a 'clean' button with null background color and an empty border. This is useful for buttons that will
+     * only use an image and no text but with a tooltip
+     *
+     * @param icon   the icon to place on the button
+     * @param action the action to perform
+     * @return new button instance
+     */
+    public static JButton newCleanButton(Icon icon, Action action, String tooltip) {
+        JButton button = newCleanButton(action);
+        button.setIcon(icon);
+        button.setToolTipText(tooltip);
         return button;
     }
 

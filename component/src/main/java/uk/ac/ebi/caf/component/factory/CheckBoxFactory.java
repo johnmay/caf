@@ -26,6 +26,7 @@ import uk.ac.ebi.caf.component.theme.Theme;
 import uk.ac.ebi.caf.component.theme.ThemeManager;
 
 import javax.swing.*;
+import java.awt.*;
 
 
 /**
@@ -45,8 +46,10 @@ public class CheckBoxFactory {
     public static JCheckBox newCheckBox() {
         JCheckBox checkbox = new JCheckBox();
         checkbox.setBorder(Borders.EMPTY_BORDER);
+        checkbox.setBorderPainted(false);
         checkbox.setFont(theme.getBodyFont());
         checkbox.setForeground(theme.getForeground().brighter());
+        checkbox.setMargin(new Insets(0, 0, 0, 0));
         return checkbox;
     }
 
