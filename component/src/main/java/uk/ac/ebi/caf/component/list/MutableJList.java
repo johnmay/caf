@@ -1,10 +1,6 @@
 package uk.ac.ebi.caf.component.list;
 
-import com.jgoodies.forms.layout.CellConstraints;
-import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
-import uk.ac.ebi.caf.component.factory.CheckBoxFactory;
-import uk.ac.ebi.caf.component.factory.PanelFactory;
 
 import javax.swing.*;
 import java.awt.datatransfer.*;

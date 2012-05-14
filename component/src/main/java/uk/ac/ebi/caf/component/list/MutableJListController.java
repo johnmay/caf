@@ -4,6 +4,7 @@ import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.Sizes;
 import org.apache.log4j.Logger;
+import uk.ac.ebi.caf.component.BorderlessScrollPane;
 import uk.ac.ebi.caf.component.factory.ButtonFactory;
 import uk.ac.ebi.caf.component.factory.PanelFactory;
 import uk.ac.ebi.caf.utility.ResourceUtility;
@@ -107,7 +108,7 @@ public class MutableJListController {
                                                       "p, p");
         CellConstraints cc = new CellConstraints();
 
-        panel.add(list, cc.xy(1, 1));
+        panel.add(new BorderlessScrollPane(list), cc.xy(1, 1));
         panel.add(controller, cc.xy(1, 2));
 
         return panel;
