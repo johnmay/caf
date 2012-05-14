@@ -1,11 +1,17 @@
 package uk.ac.ebi.caf.component.list;
 
+import com.jgoodies.forms.layout.CellConstraints;
+import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
+import uk.ac.ebi.caf.component.factory.CheckBoxFactory;
+import uk.ac.ebi.caf.component.factory.PanelFactory;
 
 import javax.swing.*;
 import java.awt.datatransfer.*;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A list with some default drag and drop behaviour enabled. The list allows drag and drop
@@ -30,7 +36,7 @@ import java.io.IOException;
  * <p/>
  * It is therefore favourable to specify the type in the constructor if more then one
  * list type will appear.
- *
+ * <p/>
  * The delete key is also hooked up to remove items.
  *
  * @author John May
@@ -54,19 +60,19 @@ public class MutableJList<E> extends GenericJList<E> {
     private Class<? extends E> type;
 
     public MutableJList() {
+        super(new MyRefreshableModel());
         setTransferHandler(new MyTransferHandler());
         setDragEnabled(true);
         setDropMode(DropMode.ON_OR_INSERT);
 
 
-
         // register delete key - perhaps this should be optional
 
         KeyStroke keyStroke = KeyStroke.getKeyStroke("DELETE");
-        Action delete =  new AbstractAction() {
+        Action delete = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                for(E element : getSelected()){
+                for (E element : getSelected()) {
                     remove(element);
                 }
                 repaint();
@@ -97,6 +103,14 @@ public class MutableJList<E> extends GenericJList<E> {
      */
     public boolean isTypeCompatible(MutableJList other) {
         return type != null ? type.equals(other.type) : other.type == null;
+    }
+
+
+    public void refresh() {
+        if (getModel() instanceof MyRefreshableModel) {
+            MyRefreshableModel model = (MyRefreshableModel) getModel();
+            model.refresh();
+        }
     }
 
     /**
@@ -240,6 +254,67 @@ public class MutableJList<E> extends GenericJList<E> {
         public int getSourceActions(JComponent c) {
             return COPY_OR_MOVE;
         }
+    }
+
+
+    private static class MyRefreshableModel extends DefaultListModel {
+
+        private List backup = new ArrayList();
+
+        public MyRefreshableModel() {
+            super();
+        }
+
+
+        @Override
+        public void setElementAt(Object obj, int index) {
+            super.setElementAt(obj, index);
+            backup.add(index, obj);
+        }
+
+        @Override
+        public void clear() {
+            super.clear();
+            backup.clear();
+        }
+
+        @Override
+        public void add(int index, Object element) {
+            super.add(index, element);
+            if (!backup.contains(element)) backup.add(index, element);
+        }
+
+        @Override
+        public Object set(int index, Object element) {
+            backup.set(index, element);
+            return super.set(index, element);
+        }
+
+        @Override
+        public void removeAllElements() {
+            backup.clear();
+            super.removeAllElements();
+        }
+
+        @Override
+        public void addElement(Object obj) {
+            super.addElement(obj);
+            if (!backup.contains(obj)) backup.add(obj);
+        }
+
+        @Override
+        public void insertElementAt(Object obj, int index) {
+            if (!backup.contains(obj)) backup.add(index, obj);
+            super.insertElementAt(obj, index);
+        }
+
+        public void refresh() {
+            super.clear();
+            for (Object obj : backup) {
+                super.addElement(obj);
+            }
+        }
+
     }
 
 }

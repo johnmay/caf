@@ -1,5 +1,6 @@
 package uk.ac.ebi.caf.component.list;
 
+import com.jgoodies.forms.factories.Borders;
 import org.apache.log4j.Logger;
 import uk.ac.ebi.caf.component.theme.ThemeManager;
 
@@ -18,8 +19,14 @@ public class GenericJList<E> extends JList {
     private static final Logger LOGGER = Logger.getLogger(GenericJList.class);
 
     public GenericJList() {
-        super(new DefaultListModel());
+        this(new DefaultListModel());
+    }
+
+    public GenericJList(DefaultListModel model) {
+        super(model);
         setFont(ThemeManager.getInstance().getTheme().getBodyFont());
+        // helps icon alignment
+        setBorder(Borders.createEmptyBorder("2px, 2px, 2px, 2px"));
     }
 
     /**
