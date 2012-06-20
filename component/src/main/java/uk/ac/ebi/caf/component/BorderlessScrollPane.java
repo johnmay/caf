@@ -20,6 +20,7 @@ public class BorderlessScrollPane extends JScrollPane {
         super(view);
         setBorder(Borders.EMPTY_BORDER);
         setViewportBorder(Borders.EMPTY_BORDER);
+        setBackground(view.getBackground());
     }
 
     public BorderlessScrollPane(Component view, int horizontalBar) {
@@ -27,5 +28,6 @@ public class BorderlessScrollPane extends JScrollPane {
         setBorder(Borders.EMPTY_BORDER);
         setViewportBorder(Borders.EMPTY_BORDER);
         setHorizontalScrollBarPolicy(horizontalBar);
+        setBackground(view.getBackground());
     }
 }
