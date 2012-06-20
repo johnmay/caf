@@ -20,11 +20,13 @@
  */
 package uk.ac.ebi.caf.component.factory;
 
-import java.util.Collection;
-import javax.swing.JComboBox;
+import com.jgoodies.forms.factories.Borders;
 import org.apache.log4j.Logger;
 import uk.ac.ebi.caf.component.theme.Theme;
 import uk.ac.ebi.caf.component.theme.ThemeManager;
+
+import javax.swing.*;
+import java.util.Collection;
 
 
 /**
@@ -60,6 +62,7 @@ public class ComboBoxFactory {
         JComboBox combobox = new JComboBox();
         combobox.setFont(theme.getBodyFont());
         combobox.setForeground(theme.getForeground());
+        combobox.setBorder(Borders.EMPTY_BORDER);
         return combobox;
     }
 }
