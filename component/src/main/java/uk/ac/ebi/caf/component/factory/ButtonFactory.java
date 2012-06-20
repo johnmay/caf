@@ -40,6 +40,7 @@ public final class ButtonFactory {
      * files
      *
      * @param action
+     *
      * @return new button instance
      */
     public static JButton newButton(Action action) {
@@ -52,6 +53,7 @@ public final class ButtonFactory {
      *
      * @param text   title to display on button
      * @param action the action to perform
+     *
      * @return new button instance
      */
     public static JButton newButton(String text,
@@ -67,6 +69,7 @@ public final class ButtonFactory {
      * only use an image and no text.
      *
      * @param action the action to perform
+     *
      * @return new button instance
      */
     public static JButton newCleanButton(Action action) {
@@ -88,12 +91,14 @@ public final class ButtonFactory {
         button.setHorizontalAlignment(alignment);
         button.setBorderPainted(false);
         button.setFocusPainted(false);
+        button.setContentAreaFilled(false);
         button.setBorder(Borders.EMPTY_BORDER);
+        button.setMargin(new Insets(0, 0, 0, 0));
         button.setBackground(background);
         return button;
     }
 
-    private static Color CLEAR = new Color(255, 255, 255, 5);
+    private static Color CLEAR = new Color(255, 255, 255, 0);
 
 
     /**
@@ -102,6 +107,7 @@ public final class ButtonFactory {
      *
      * @param icon   the icon to place on the button
      * @param action the action to perform
+     *
      * @return new button instance
      */
     public static JButton newCleanButton(Icon icon, Action action) {
@@ -116,6 +122,7 @@ public final class ButtonFactory {
      *
      * @param icon   the icon to place on the button
      * @param action the action to perform
+     *
      * @return new button instance
      */
     public static JButton newCleanButton(Icon icon, Action action, String tooltip) {
