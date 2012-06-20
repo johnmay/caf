@@ -102,7 +102,7 @@ public class FilePreference extends AbstractPreference<File> {
         } else if (OS.contains("MAC")) {
             return new File(System.getProperty("user.home")
                                     + File.separator + "Library"
-                                    + File.separator + "Application\\ Support");
+                                    + File.separator + "Application Support");
         } else if (OS.contains("NUX")) {
 
             // would be good to write an program specific name
