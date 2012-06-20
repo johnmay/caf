@@ -38,7 +38,10 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -204,34 +207,39 @@ public class PreferencePanelFactory {
         layout.appendRow(new RowSpec(Sizes.DLUY4));
         layout.appendRow(new RowSpec(Sizes.PREFERRED));
 
+        // fires to change the preference an the focus lost action
+        final Timer timer = new Timer(1750, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String value = field.getText();
+                if (!value.equals(preference.get())) {
+                    if (field.getText().isEmpty()) {
+                        field.setText(preference.getDefault());
+                    } else {
+                        preference.put(value);
+                        onFocusLost.actionPerformed(e);
+                    }
+                }
+            }
+        });
+        timer.setRepeats(false);
 
         field.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
-                if (!preference.get().equals(field.getText())) {
-                    preference.put(field.getText());
-                }
+                timer.restart();
             }
 
             @Override
             public void removeUpdate(DocumentEvent e) {
-                if (!preference.get().equals(field.getText())) {
-                    preference.put(field.getText());
-                    if (field.getText().isEmpty()) {
-                        preference.put(preference.getDefault());
-                    }
-                }
+                timer.restart();
             }
 
             @Override
             public void changedUpdate(DocumentEvent e) {
-                if (!preference.get().equals(field.getText())) {
-                    preference.put(field.getText());
-                }
+                timer.restart();
             }
         });
-
-        addFocusLostAction(field, onFocusLost, preference);
 
     }
 
@@ -275,38 +283,37 @@ public class PreferencePanelFactory {
         layout.appendRow(new RowSpec(Sizes.PREFERRED));
 
 
+        // fires to change the preference an the focus lost action
+        final Timer timer = new Timer(1750, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                File value = new File(field.getText());
+                if (!value.equals(preference.get())) {
+                    if (field.getText().isEmpty()) {
+                        field.setText(preference.getDefault().getAbsolutePath());
+                    } else {
+                        preference.put(value);
+                        onFocusLost.actionPerformed(e);
+                    }
+                }
+            }
+        });
+        timer.setRepeats(false);
+
         field.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
-                if (!preference.get().equals(field.getText())) {
-                    preference.put(new File(field.getText()));
-                }
+                timer.restart();
             }
 
             @Override
             public void removeUpdate(DocumentEvent e) {
-                if (!preference.get().equals(field.getText())) {
-                    preference.put(new File(field.getText()));
-                }
+                timer.restart();
             }
 
             @Override
             public void changedUpdate(DocumentEvent e) {
-                if (!preference.get().equals(field.getText())) {
-                    preference.put(new File(field.getText()));
-                }
-            }
-        });
-
-        component.addFocusListener(new FocusAdapter() {
-            @Override
-            public void focusLost(FocusEvent e) {
-                // XXX need to stop browse triggering change
-                if (!browse.isSelected()) {
-                    onFocusLost.actionPerformed(new ActionEvent(preference,
-                                                                ActionEvent.ACTION_PERFORMED,
-                                                                "Object lost focus"));
-                }
+                timer.restart();
             }
         });
 
