@@ -49,7 +49,8 @@ public abstract class GeneralAction extends AbstractAction {
             Action.LARGE_ICON_KEY,
             GeneralAction.PROJECT_REQUIRMENTS,
             EXPAND_BUTTON_OPEN_ICON,
-            EXPAND_BUTTON_CLOSE_ICON // old use two different buttons and switch between them with setVisible
+            EXPAND_BUTTON_CLOSE_ICON
+            // old use two different buttons and switch between them with setVisible
     };
 
 
@@ -72,13 +73,18 @@ public abstract class GeneralAction extends AbstractAction {
      * @param command
      */
     public GeneralAction(String command) {
+
         this.command = command;
+
+        if (command != null && !command.isEmpty()) {
+
         this.actionProperties = ActionProperties.getInstance(getClass());
 
 
-        for (String actionValue : actionValues) {
-            String value = actionProperties.getProperty(command + ".Action." + actionValue);
-            setLoadedValue(actionValue, value);
+            for (String actionValue : actionValues) {
+                String value = actionProperties.getProperty(command + ".Action." + actionValue);
+                setLoadedValue(actionValue, value);
+            }
         }
     }
 
@@ -109,7 +115,7 @@ public abstract class GeneralAction extends AbstractAction {
     }
 
     public static KeyStroke resolveKeystroke(String value) {
-        if(value.contains("<mask>")){
+        if (value.contains("<mask>")) {
             KeyStroke stroke = KeyStroke.getKeyStroke(value.replaceAll("\\<mask\\>", ""));
             return KeyStroke.getKeyStroke(stroke.getKeyCode(), stroke.getModifiers() + Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
         }
