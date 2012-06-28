@@ -25,21 +25,46 @@ public class SuggestionField extends JTextField {
 
     private static final Logger LOGGER = Logger.getLogger(SuggestionField.class);
 
-    private SuggestDialog dialog;
-    private DocumentListener listener;
+    private SuggestDialog      dialog;
+    private DocumentListener   listener;
+    private ReplacementHandler replacementHandler;
 
     private boolean suggest = true;
 
     public SuggestionField(Window window, int col,
                            SuggestionHandler suggestionHandler,
-                           final ReplacementHandler replacementHandler) {
+                           ReplacementHandler replacementHandler) {
         super(col);
+
+
+        this.replacementHandler = replacementHandler;
+
+        listener = new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent documentEvent) {
+                String text = getText();
+                dialog.suggest(documentEvent);
+                dialog.setVisible(true);
+                dialog.reposition();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent documentEvent) {
+                dialog.setVisible(false);
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent documentEvent) {
+                String text = getText();
+                dialog.suggest(documentEvent);
+                dialog.setVisible(true);
+            }
+        };
 
         setFont(ThemeManager.getInstance().getTheme().getBodyFont());
         setForeground(ThemeManager.getInstance().getTheme().getForeground());
 
         dialog = new SuggestDialog(window, this, suggestionHandler);
-        final JTextField component = this;
 
         getInputMap().put(KeyStroke.getKeyStroke("DOWN"), new AbstractAction() {
             @Override
@@ -61,7 +86,7 @@ public class SuggestionField extends JTextField {
                 dialog.setVisible(!dialog.isVisible()); // toggle
 
                 if (dialog.hasSelection()) {
-                    replacementHandler.replace(component, dialog.getSelection());
+                    handleReplacement();
                 }
             }
         });
@@ -73,7 +98,7 @@ public class SuggestionField extends JTextField {
                 dialog.setVisible(!dialog.isVisible()); // toggle
 
                 if (dialog.hasSelection()) {
-                    replacementHandler.replace(component, dialog.getSelection());
+                    handleReplacement();
                 }
             }
         });
@@ -92,40 +117,22 @@ public class SuggestionField extends JTextField {
                 int index = dialog.getList().locationToIndex(e.getPoint());
                 if (index != -1) {
                     dialog.setVisible(!dialog.isVisible());
-                    replacementHandler.replace(component, dialog.getSelection());
+                    handleReplacement();
                 }
             }
         });
 
-        listener = new DocumentListener() {
-            @Override
-            public void insertUpdate(DocumentEvent documentEvent) {
-                String text = getText();
-                dialog.suggest(text);
-                dialog.setVisible(true);
-                dialog.reposition();
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent documentEvent) {
-                dialog.setVisible(false);
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent documentEvent) {
-                String text = getText();
-                dialog.suggest(text);
-                dialog.setVisible(true);
-            }
-        };
 
         getDocument().addDocumentListener(listener);
 
     }
 
-    public void replaceWithSuggestion(Object object) {
-        setText(object.toString());
+    private void handleReplacement() {
+        getDocument().removeDocumentListener(listener);
+        replacementHandler.replace(this, dialog.getSelection());
+        getDocument().addDocumentListener(listener);
     }
+
 
     public void setSuggest(boolean suggest) {
         if (this.suggest == suggest) {

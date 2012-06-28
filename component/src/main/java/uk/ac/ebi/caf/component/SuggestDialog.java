@@ -1,8 +1,10 @@
 package uk.ac.ebi.caf.component;
 
 import org.apache.log4j.Logger;
+import uk.ac.ebi.caf.utility.ColorUtility;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -20,10 +22,10 @@ public class SuggestDialog extends JDialog {
 
     private static final Logger LOGGER = Logger.getLogger(SuggestDialog.class);
 
-    private JTextField component;
-    private Window window;
-    private JList list;
-    private JScrollPane pane;
+    private JTextField        component;
+    private Window            window;
+    private JList             list;
+    private JScrollPane       pane;
     private SuggestionHandler handler;
 
     public SuggestDialog(Window window,
@@ -35,19 +37,24 @@ public class SuggestDialog extends JDialog {
         setUndecorated(true);
         setFocusable(false);
         setFocusableWindowState(false);
+        setAlwaysOnTop(true);
 
         list = new JList(new DefaultListModel());
         list.setVisibleRowCount(5);
+        list.setBackground(component.getBackground());
         list.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
-        list.setCellRenderer(handler.getRenderer());
+        ListCellRenderer renderer = handler.getRenderer();
+        prepareRenderer(renderer);
+        list.setCellRenderer(renderer);
+
         JScrollPane pane = new JScrollPane(list);
         add(pane);
 
-        this.window    = window;
+        this.window = window;
         this.component = component;
-        this.handler   = handler;
-        
-            
+        this.handler = handler;
+
+
         window.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent componentEvent) {
@@ -61,15 +68,15 @@ public class SuggestDialog extends JDialog {
         });
 
     }
-    
-    public JList getList(){
+
+    public JList getList() {
         return list;
     }
-    
-    public void suggest(String text){
+
+    public void suggest(DocumentEvent event) {
         DefaultListModel model = (DefaultListModel) list.getModel();
         model.removeAllElements();
-        for(Object suggestion : handler.getSuggestions(text)){
+        for (Object suggestion : handler.getSuggestions(event)) {
             model.addElement(suggestion);
         }
     }
@@ -86,7 +93,7 @@ public class SuggestDialog extends JDialog {
     }
 
     @Override
-    public void setVisible(boolean visible){
+    public void setVisible(boolean visible) {
         boolean hasSuggestions = list.getModel().getSize() != 0;
         super.setVisible(visible && hasSuggestions);
     }
@@ -104,14 +111,29 @@ public class SuggestDialog extends JDialog {
         int max = list.getModel().getSize();
         int current = list.getSelectedIndex();
         int next = current == -1
-                ? 0
-                : current + 1;
-        
-        if(next < max){
+                   ? 0
+                   : current + 1;
+
+        if (next < max) {
             list.setSelectedIndex(next);
             list.ensureIndexIsVisible(next);
         }
-        
+
+    }
+
+    public void prepareRenderer(ListCellRenderer renderer) {
+        if (renderer instanceof Component) {
+            Component component = (Component) renderer;
+            Font font = component.getFont();
+            component.setFont(font.deriveFont(font.getSize() * 0.8f));
+
+            list.setFont(component.getFont());
+
+            // set fg col
+            Color foreground = ColorUtility.shade(component.getForeground(), 0.4f);
+            component.setForeground(foreground);
+            list.setForeground(foreground);
+        }
     }
 
     public void previous() {
@@ -119,14 +141,14 @@ public class SuggestDialog extends JDialog {
         int max = list.getModel().getSize();
         int current = list.getSelectedIndex();
         int prev = current == -1
-                 ? max - 1
-                 : current - 1;
+                   ? max - 1
+                   : current - 1;
 
-        if(prev >= 0){
+        if (prev >= 0) {
             list.setSelectedIndex(prev);
             list.ensureIndexIsVisible(prev);
         } else {
-            list.removeSelectionInterval(0,max);
+            list.removeSelectionInterval(0, max);
         }
     }
 

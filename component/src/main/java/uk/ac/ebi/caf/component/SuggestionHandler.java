@@ -1,8 +1,10 @@
 package uk.ac.ebi.caf.component;
 
-import org.apache.log4j.Logger;
-
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -16,10 +18,21 @@ import java.util.Collection;
  */
 public abstract class SuggestionHandler {
 
-    public  ListCellRenderer getRenderer(){
+    public ListCellRenderer getRenderer() {
         return new DefaultListCellRenderer();
     }
 
-    public abstract Collection<Object> getSuggestions(String text);
+    public Collection<Object> getSuggestions(String text) {
+        return new ArrayList<Object>();
+    }
+
+    public Collection<Object> getSuggestions(DocumentEvent e) {
+        try {
+            Document document = e.getDocument();
+            return getSuggestions(document.getText(0, document.getLength()));
+        } catch (BadLocationException e1) {
+            return getSuggestions("");
+        }
+    }
 
 }
