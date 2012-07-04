@@ -5,11 +5,11 @@
   <parent>
     <artifactId>caf</artifactId>
     <groupId>uk.ac.ebi</groupId>
-    <version>0.8.5-SNAPSHOT</version>
+    <version>0.8.5</version>
   </parent>
   <groupId>uk.ac.ebi.caf</groupId>
   <artifactId>caf-component</artifactId>
-  <version>0.8.5-SNAPSHOT</version>
+  <version>0.8.5</version>
   <name>Component</name>
   <url>http://maven.apache.org</url>
   <properties>
