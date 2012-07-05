@@ -66,12 +66,12 @@ public abstract class AbstractComponentInjector {
 
     protected static boolean canSetIcon(JComponent component) {
         // JToggleButton, JCheckBox and JRadioButton inherit from JButton so aren't tested
-        return component instanceof JLabel || component instanceof JButton;
+        return component instanceof JLabel || component instanceof AbstractButton;
     }
 
     protected static boolean canSetSelectedIcon(JComponent component) {
         // JToggleButton, JCheckBox and JRadioButton inherit from JButton so aren't tested
-        return component instanceof JButton;
+        return component instanceof AbstractButton;
     }
 
     protected static void invoke(JComponent component, String methodName, Object... params) {
