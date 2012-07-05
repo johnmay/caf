@@ -18,43 +18,69 @@
  */
 package uk.ac.ebi.caf.utility;
 
-import java.net.URL;
-import javax.swing.ImageIcon;
 import org.apache.log4j.Logger;
+
+import javax.swing.*;
+import java.io.File;
+import java.net.URL;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 
 /**
- * @name    ColorUtilities - 2011.10.11 <br>
- *          Class description
+ * @author johnmay
+ * @author $Author$ (this version)
  * @version $Rev$ : Last Changed $Date$
- * @author  johnmay
- * @author  $Author$ (this version)
+ * @name ColorUtilities - 2011.10.11 <br>
+ * Class description
  */
 public class ResourceUtility {
 
     private static final Logger LOGGER = Logger.getLogger(ResourceUtility.class);
 
+    private static final int MAX_CACHE_SIZE = 30;
+
+    private static Map<String, ImageIcon> CACHE = new LinkedHashMap<String, ImageIcon>() {
+        @Override
+        protected boolean removeEldestEntry(Map.Entry<String, ImageIcon> eldest) {
+            return size() >= MAX_CACHE_SIZE;
+        }
+    };
 
     public static final ImageIcon getIcon(Class root, String path) {
-        java.net.URL imageURL = root.getResource(path);
 
-        if (imageURL != null) {
-            return new ImageIcon(imageURL);
-        } else {
-            LOGGER.error("Couldn't find file: " + path);
-            return new ImageIcon(new byte[0], path);
-        }
+        String packageName = root.getPackage().getName();
+
+        return getIcon("/" + packageName.replaceAll("\\.", "/") + File.separator + path);
+
     }
 
 
     public static final ImageIcon getIcon(String path) {
-        java.net.URL imageURL = ResourceUtility.class.getResource(path);
 
-        if (imageURL != null) {
-            return new ImageIcon(imageURL);
+        ImageIcon icon = CACHE.get(path);
+
+        if (icon == null) {
+            icon = loadNewIcon(path);
+        }
+
+        // renews the cache
+        CACHE.put(path, icon);
+
+        return icon;
+
+    }
+
+    private static final ImageIcon loadNewIcon(String path) {
+
+        URL url = ResourceUtility.class.getResource(path);
+
+        if (url != null) {
+            return new ImageIcon(url);
         } else {
-            LOGGER.error("Couldn't find file: " + path);
+            LOGGER.error("Unable to load image from: " + path);
             return new ImageIcon(new byte[0], path);
         }
+
     }
 }
