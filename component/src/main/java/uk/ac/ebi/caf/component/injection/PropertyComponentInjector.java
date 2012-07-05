@@ -21,8 +21,8 @@ public class PropertyComponentInjector extends AbstractComponentInjector {
     private static final String NAME          = ".Text";
     private static final String TOOLTIP       = ".TooltipText";
     private static final String ICON          = ".Icon";
-    private static final String SELECTED_ICON = ".Icon.Selected";
-    private static final String DISABLED_ICON = ".Icon.Disabled";
+    private static final String SELECTED_ICON = ".SelectedIcon";
+    private static final String DISABLED_ICON = ".DisabledIcon";
 
     private final Properties properties;
 
