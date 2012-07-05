@@ -15,30 +15,47 @@ public abstract class AbstractComponentInjector {
 
     private static final Logger LOGGER = Logger.getLogger(AbstractComponentInjector.class);
 
+    public void inject(Object object) {
 
-    public void inject(Object object){
-        for(Field field : object.getClass().getDeclaredFields()){
-            if(field.isAnnotationPresent(Inject.class)){
-                inject(object, field);
+        if (object == null)
+            return;
+
+        inject(object.getClass(), object.getClass(), object);
+
+    }
+
+    public void inject(Class root, Class current, Object object) {
+
+        for (Field field : current.getDeclaredFields()) {
+            if (field.isAnnotationPresent(Inject.class)) {
+                inject(root, object, field);
             }
         }
+
+        Class parent = current.getSuperclass();
+
+        if (parent != Object.class) {
+            inject(root, parent, object);
+        }
+
+
     }
 
 
-    private void inject(Object object, Field field) {
+    private void inject(Class c, Object object, Field field) {
 
         Inject inject = field.getAnnotation(Inject.class);
-        String name   = inject.value().isEmpty() ? field.getName() : inject.value();
+        String name = inject.value().isEmpty() ? field.getName() : inject.value();
 
         try {
-            // could look up an accessor method but for time being we will
-            // be naughty and break encapsulation
+
+            // XXX breaking encapsulation >_>
             field.setAccessible(true);
             JComponent component = (JComponent) field.get(object);
             field.setAccessible(false);
 
-            // inject the
-            inject(component, name);
+            // inject the information
+            inject(c, component, name);
 
         } catch (IllegalAccessException ex) {
             LOGGER.info("Field was not accessible");
@@ -67,6 +84,18 @@ public abstract class AbstractComponentInjector {
         }
     }
 
+    protected static void setText(JComponent component, String text) {
+
+        if (text == null || text.isEmpty())
+            return;
+
+        if (component instanceof JLabel) {
+            ((JLabel) component).setText(text);
+        } else if (component instanceof AbstractButton) {
+            ((AbstractButton) component).setText(text);
+        }
+    }
+
     protected static void setIcon(JComponent component, Icon icon) {
         AbstractComponentInjector.invoke(component, "setIcon", icon);
     }
@@ -79,6 +108,6 @@ public abstract class AbstractComponentInjector {
         AbstractComponentInjector.invoke(component, "setSelectedIcon", icon);
     }
 
-    protected abstract void inject(JComponent component, String name);
+    public abstract void inject(Class c, JComponent component, String fieldName);
 
 }
