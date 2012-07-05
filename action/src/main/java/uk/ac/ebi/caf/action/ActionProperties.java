@@ -30,7 +30,7 @@ import java.util.Properties;
 
 /**
  * Singleton class to load action properties from '.properties' files. These files
- * are currently located in the /uk/ac/ebi/caf/action.properties to simplify merging
+ * are currently located in the /uk/ac/ebi/caf/action/action.properties to simplify merging
  * when combining jars (originally the property file was located in the package of the
  * class which needed it but this proved troublesome to combined when creating a single
  * jar with dependencies).
@@ -40,13 +40,11 @@ import java.util.Properties;
  */
 public class ActionProperties extends Properties {
 
-    private static final Logger LOGGER = Logger.getLogger(ActionProperties.class);
-
-    private final static String LOCATION = "META-INF/actions/action.properties";
+    private static final Logger LOGGER   = Logger.getLogger(ActionProperties.class);
+    private final static String LOCATION = "uk/ac/ebi/caf/action/action.properties";
 
     /**
      * Load the action properties for a given package
-     *
      */
     private ActionProperties() {
 
@@ -107,6 +105,8 @@ public class ActionProperties extends Properties {
 
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
 
+        System.out.println(loader.getResource(path));
+
         try {
             return loader.getResources(path);
         } catch (IOException ex) {
@@ -117,14 +117,6 @@ public class ActionProperties extends Properties {
 
     }
 
-
-    /**
-     * Singleton access
-     *
-     * @param location
-     *
-     * @return
-     */
     public static ActionProperties getInstance() {
         return ActionPropertiesHolder.INSTANCE;
     }
