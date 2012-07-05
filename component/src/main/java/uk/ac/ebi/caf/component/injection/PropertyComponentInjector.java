@@ -17,12 +17,12 @@ public class PropertyComponentInjector extends AbstractComponentInjector {
 
     private static final Logger LOGGER = Logger.getLogger(PropertyComponentInjector.class);
 
-    // tags
-    private static final String NAME            = "." + Action.SHORT_DESCRIPTION;
-    private static final String TOOLTIP         = "." + Action.LONG_DESCRIPTION;
-    private static final String ICON            = ".Icon";
-    private static final String SELECTED_ICON   = ".Icon.Selected";
-    private static final String DISABLED_ICON   = ".Icon.Disabled";
+    // key suffixes
+    private static final String NAME          = ".Text";
+    private static final String TOOLTIP       = ".TooltipText";
+    private static final String ICON          = ".Icon";
+    private static final String SELECTED_ICON = ".Icon.Selected";
+    private static final String DISABLED_ICON = ".Icon.Disabled";
 
     private final Properties properties;
     private final Class root;
