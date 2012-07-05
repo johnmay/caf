@@ -4,47 +4,27 @@
  * 2011.09.30
  *
  * This file is part of the CheMet library
- * 
+ *
  * The CheMet library is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * CheMet is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with CheMet.  If not, see <http://www.gnu.org/licenses/>.
  */
 package uk.ac.ebi.caf.report.bar;
 
-import uk.ac.ebi.caf.component.factory.LabelFactory;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.GradientPaint;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.MouseInfo;
-import java.awt.Paint;
-import java.awt.Point;
-import java.awt.RenderingHints;
-import java.awt.event.*;
-import java.util.Stack;
-
-
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-
-import org.apache.log4j.Logger;
-
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
-import javax.swing.*;
+import org.apache.log4j.Logger;
+import uk.ac.ebi.caf.component.factory.ButtonFactory;
+import uk.ac.ebi.caf.component.factory.LabelFactory;
 import uk.ac.ebi.caf.report.Report;
 import uk.ac.ebi.caf.report.ReportLevel;
 import uk.ac.ebi.caf.report.ReportManager;
@@ -52,13 +32,21 @@ import uk.ac.ebi.caf.utility.ColorUtility;
 import uk.ac.ebi.caf.utility.ResourceUtility;
 import uk.ac.ebi.caf.utility.TextUtility;
 
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.Stack;
+
 
 /**
- *          MessageManager – 2011.09.30 <br>
- *          Class description
+ * MessageManager – 2011.09.30 <br>
+ * Class description
+ *
+ * @author johnmay
+ * @author $Author: johnmay $ (this version)
  * @version $Rev: 1234 $ : Last Changed $Date: 2012-01-25 11:27:05 +0000 (Wed, 25 Jan 2012) $
- * @author  johnmay
- * @author  $Author: johnmay $ (this version)
  */
 public class MessageBar
         extends JPanel
@@ -96,7 +84,7 @@ public class MessageBar
                 new FormLayout("1dlu, min, 1dlu, min, 4dlu, p:grow, 1dlu", "0dlu, center:p, 0dlu"));
         CellConstraints cc = new CellConstraints();
         label.setForeground(Color.BLACK);
-        this.add(new JButton(new HideMessage()),
+        this.add(ButtonFactory.newCleanButton(ResourceUtility.getIcon(MessageBar.class, "close_16x16.png"), new HideMessage()),
                  cc.xy(2, 2, CellConstraints.CENTER,
                        CellConstraints.CENTER));
         this.add(iconLabel, cc.xy(4, 2, CellConstraints.CENTER, CellConstraints.CENTER));
@@ -111,7 +99,6 @@ public class MessageBar
                                        getPreferredSize().height / 2, WARN_HIGH, true);
 
         this.setVisible(false);
-
 
 
     }
@@ -204,12 +191,6 @@ public class MessageBar
      * Action to hide the panel
      */
     private class HideMessage extends AbstractAction {
-
-        public HideMessage() {
-            super("HideMessage");
-        }
-
-
         public void actionPerformed(ActionEvent e) {
             stack.pop();
             // when empty hide it
