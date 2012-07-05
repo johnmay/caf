@@ -25,41 +25,61 @@ public class PropertyComponentInjector extends AbstractComponentInjector {
     private static final String DISABLED_ICON = ".Icon.Disabled";
 
     private final Properties properties;
-    private final Class root;
 
-    public PropertyComponentInjector(Properties properties, Class root){
+    public PropertyComponentInjector(Properties properties) {
         this.properties = properties;
-        this.root       = root;
     }
 
     @Override
-    protected void inject(JComponent component, String name) {
+    public void inject(Class c, JComponent component, String fieldName) {
 
-        component.setName(properties.getProperty(name + NAME, component.getName()));
-        component.setToolTipText(properties.getProperty(name + TOOLTIP, component.getToolTipText()));
+        setText(component, get(c, fieldName + NAME));
+        component.setToolTipText(get(c, fieldName + TOOLTIP, component.getToolTipText()));
 
-        String iconKey = name + ICON;
-        if(exists(iconKey) && canSetIcon(component)){
-            setIcon(component, ResourceUtility.getIcon(root,
-                                                       properties.getProperty(iconKey)));
+        String path = get(c, fieldName + ICON);
+        if (!path.isEmpty() && canSetIcon(component)) {
+            setIcon(component, ResourceUtility.getIcon(c,
+                                                       path));
 
         }
 
-        String disabledIconKey = name + DISABLED_ICON;
-        if(exists(iconKey) && canSetIcon(component)){
-            setDisabledIcon(component, ResourceUtility.getIcon(root,
-                                                               properties.getProperty(disabledIconKey)));
+        String disabledPath = get(c, fieldName + DISABLED_ICON);
+        if (!disabledPath.isEmpty() && canSetIcon(component)) {
+            setDisabledIcon(component, ResourceUtility.getIcon(c,
+                                                               disabledPath));
         }
 
-        String selectedIconKey = name + SELECTED_ICON;
-        if(exists(iconKey) && canSetIcon(component)){
-            setSelectedIcon(component, ResourceUtility.getIcon(root,
-                                                               properties.getProperty(selectedIconKey)));
+        String selectedPath = get(c, fieldName + SELECTED_ICON);
+        if (!selectedPath.isEmpty() && canSetIcon(component)) {
+            setSelectedIcon(component, ResourceUtility.getIcon(c,
+                                                               path));
         }
 
     }
 
-    private boolean exists(String key){
-        return properties.getProperty(key) != null;
+    private String get(Class c, String suffix, String defaultValue) {
+
+        String key = c.getName() + "." + suffix;
+        String value = properties.getProperty(key);
+
+        if (value != null)
+            return value;
+
+        key = c.getSimpleName() + "." + suffix;
+        value = properties.getProperty(key);
+
+        if (value != null)
+            return value;
+
+        return defaultValue;
+
+    }
+
+    private String get(Class c, String suffix) {
+        return get(c, suffix, "");
+    }
+
+    private boolean exists(String key) {
+        return properties.containsKey(key);
     }
 }
