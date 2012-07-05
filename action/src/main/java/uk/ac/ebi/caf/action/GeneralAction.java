@@ -32,37 +32,33 @@ public abstract class GeneralAction extends AbstractAction {
 
     private static final org.apache.log4j.Logger LOGGER = org.apache.log4j.Logger.getLogger(GeneralAction.class);
 
-    private ActionProperties actionProperties;
-
     private String command;
-
-    public static final String PROJECT_REQUIRMENTS = "ProjectRequirements";
 
     public static final String EXPAND_BUTTON_OPEN_ICON = "OpenIcon";
 
     public static final String EXPAND_BUTTON_CLOSE_ICON = "CloseIcon";
 
-    private String[] actionValues = new String[]{
+    private final String[] KEY_SUFFIX = new String[]{
             Action.NAME,
             Action.SHORT_DESCRIPTION,
             Action.ACCELERATOR_KEY,
             Action.LARGE_ICON_KEY,
-            GeneralAction.PROJECT_REQUIRMENTS,
+            Action.SMALL_ICON,
             EXPAND_BUTTON_OPEN_ICON,
             EXPAND_BUTTON_CLOSE_ICON
             // old use two different buttons and switch between them with setVisible
     };
 
+    private Class location;
 
-    public GeneralAction(Class clazz, String command) {
+
+    public GeneralAction(Class location, String command) {
+
         this.command = command;
-        this.actionProperties = ActionProperties.getInstance(clazz);
+        this.location = location;
 
+        load();
 
-        for (String actionValue : actionValues) {
-            String action = actionProperties.getProperty(command + ".Action." + actionValue);
-            setLoadedValue(actionValue, action);
-        }
     }
 
 
@@ -75,17 +71,32 @@ public abstract class GeneralAction extends AbstractAction {
     public GeneralAction(String command) {
 
         this.command = command;
+        this.location = getClass();
+
+        load();
+
+    }
+
+    public GeneralAction() {
+        this.command = getClass().getSimpleName();
+        this.location = getClass();
+
+    }
+
+    private final void load() {
 
         if (command != null && !command.isEmpty()) {
 
-        this.actionProperties = ActionProperties.getInstance(getClass());
+            for (String suffix : KEY_SUFFIX) {
 
+                // could change here to use only the class name (location and check for fully qualified names)
+                String value = ActionProperties.getInstance().getProperty(command + ".Action." + suffix);
+                loadValue(suffix, value);
 
-            for (String actionValue : actionValues) {
-                String value = actionProperties.getProperty(command + ".Action." + actionValue);
-                setLoadedValue(actionValue, value);
             }
+
         }
+
     }
 
 
@@ -96,15 +107,15 @@ public abstract class GeneralAction extends AbstractAction {
      * @param key   Action.NAME, Action.SHORT_DESCRIPTION etc...
      * @param value
      */
-    private void setLoadedValue(String key, String value) {
+    private void loadValue(String key, String value) {
 
-        if (key == null || value == null) {
+        // ignore empty cases
+        if (key == null || value == null
+                || key.isEmpty() || value.isEmpty()) {
             return;
         }
 
-        if (key.equals(GeneralAction.PROJECT_REQUIRMENTS)) {
-            putValue(key, value);
-        } else if (key.equals(Action.LARGE_ICON_KEY)) {
+        if (key.equals(Action.LARGE_ICON_KEY) || key.equals(Action.SMALL_ICON)) {
             putValue(key, getIcon(value));
         } else if (key.equals(Action.ACCELERATOR_KEY)) {
             putValue(key, resolveKeystroke(value));
@@ -136,6 +147,6 @@ public abstract class GeneralAction extends AbstractAction {
 
 
     public String getName() {
-        return actionProperties.getProperty(command + ".Action.Name");
+        return ActionProperties.getInstance().getProperty(command + ".Action.Name");
     }
 }

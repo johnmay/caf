@@ -19,52 +19,69 @@
 package uk.ac.ebi.caf.action;
 
 import org.apache.log4j.Logger;
+import sun.misc.CompoundEnumeration;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Enumeration;
 import java.util.Properties;
-import java.util.prefs.Preferences;
 
 
 /**
- * Singleton class to load action properties from a resource file
+ * Singleton class to load action properties from '.properties' files. These files
+ * are currently located in the /uk/ac/ebi/caf/action.properties to simplify merging
+ * when combining jars (originally the property file was located in the package of the
+ * class which needed it but this proved troublesome to combined when creating a single
+ * jar with dependencies).
  *
  * @author johnmay
  * @date Apr 13, 2011
  */
-public class ActionProperties
-        extends Properties {
+public class ActionProperties extends Properties {
 
     private static final Logger LOGGER = Logger.getLogger(ActionProperties.class);
 
-    private final static String RESOURCE_NAME = Preferences.userNodeForPackage(ActionProperties.class).get("Action.Resource.Name", "action.properties");
-
+    private final static String LOCATION = "META-INF/actions/action.properties";
 
     /**
-     * Load the action properties for a given package (determined by class)
+     * Load the action properties for a given package
      *
-     * @param location
      */
-    private ActionProperties(Class location) {
+    private ActionProperties() {
 
-        URL url = location.getResource(RESOURCE_NAME);
+        Enumeration<URL> resources = getResources(LOCATION);
+
+        while (resources.hasMoreElements()) {
+
+            load(resources.nextElement());
+
+        }
+
+    }
+
+    /**
+     * Loads the properties for the provided url. If a property for the given key already exists the
+     * property will be overwritten.
+     *
+     * @param url resource location to load
+     */
+    private void load(URL url) {
 
         if (url == null) {
             LOGGER.error("Could not open action properties for: "
-                                 + location.getPackage() + " please make sure it exists", new Exception());
+                                 + url.getPath() + " please make sure it exists", new Exception());
             return;
         }
 
         InputStream stream = null;
         try {
             stream = url.openStream();
+            // load appends properties (and overwrite if key clash)
             load(stream);
         } catch (IOException ex) {
             LOGGER.error("Could not open action properties for: "
-                                 + location.getPackage(), ex);
+                                 + url.getPath(), ex);
 
         } finally {
             if (stream != null) {
@@ -72,29 +89,48 @@ public class ActionProperties
                     stream.close();
                 } catch (IOException ex) {
                     LOGGER.error("Could not close action properties for: "
-                                         + location.getPackage(), ex);
+                                         + url.getPath(), ex);
                 }
             }
         }
 
     }
 
+    /**
+     * Loads resources from the specified location, if no resources are found an empty collection is returned
+     *
+     * @param path resource location
+     *
+     * @return all resources for the given location
+     */
+    private Enumeration<URL> getResources(String path) {
 
-    public static ActionProperties getInstance(Class location) {
-        return ActionPropertiesHolder.getInstance(location);
+        ClassLoader loader = Thread.currentThread().getContextClassLoader();
+
+        try {
+            return loader.getResources(path);
+        } catch (IOException ex) {
+            LOGGER.error("Unable to read " + LOCATION + " from class loader - low level I/O exception:", ex);
+        }
+
+        return new CompoundEnumeration<URL>(new Enumeration[0]);
+
+    }
+
+
+    /**
+     * Singleton access
+     *
+     * @param location
+     *
+     * @return
+     */
+    public static ActionProperties getInstance() {
+        return ActionPropertiesHolder.INSTANCE;
     }
 
 
     private static class ActionPropertiesHolder {
-
-        private static Map<Package, ActionProperties> propertiesMap = new HashMap<Package, ActionProperties>();
-
-
-        private static ActionProperties getInstance(Class location) {
-            if (!propertiesMap.containsKey(location.getPackage())) {
-                propertiesMap.put(location.getPackage(), new ActionProperties(location));
-            }
-            return propertiesMap.get(location.getPackage());
-        }
+        private static final ActionProperties INSTANCE = new ActionProperties();
     }
 }
