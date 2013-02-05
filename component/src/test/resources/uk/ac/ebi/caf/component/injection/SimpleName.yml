@@ -1,0 +1,10 @@
+PrefixGuf:
+    notUsed:
+        unused: null
+TestClass:
+    label:
+        text:    Sample label
+        tooltip: Tooltip text label
+SuffixGuf:
+    notUsed:
+        unused: null

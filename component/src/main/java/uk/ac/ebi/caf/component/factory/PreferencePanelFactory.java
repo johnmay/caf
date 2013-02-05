@@ -89,9 +89,11 @@ public class PreferencePanelFactory {
 
     }
 
+
     public static JComponent getPreferencePanel(Preference... descriptors) {
         return getPreferencePanel(descriptors, new Action[descriptors.length]);
     }
+
 
     public static JComponent getPreferencePanel(Preference[] descriptors, Action[] actions) {
 
@@ -120,11 +122,13 @@ public class PreferencePanelFactory {
                                   new Action[]{onFocusLost});
     }
 
+
     public static void getPreferenceEditor(Preference preference,
                                            JComponent component,
                                            FormLayout layout) {
         getPreferenceEditor(preference, component, DO_NOTHING, layout);
     }
+
 
     public static void getPreferenceEditor(Preference preference,
                                            JComponent component,
@@ -145,6 +149,7 @@ public class PreferencePanelFactory {
                                            FormLayout layout) {
         getPreferenceEditor(preference, component, DO_NOTHING, layout);
     }
+
 
     public static void getPreferenceEditor(final IntegerPreference preference,
                                            final JComponent component,
@@ -185,11 +190,13 @@ public class PreferencePanelFactory {
 
     }
 
+
     public static void getPreferenceEditor(final StringPreference preference,
                                            final JComponent component,
                                            FormLayout layout) {
         getPreferenceEditor(preference, component, DO_NOTHING, layout);
     }
+
 
     public static void getPreferenceEditor(final StringPreference preference,
                                            final JComponent component,
@@ -230,10 +237,12 @@ public class PreferencePanelFactory {
                 timer.restart();
             }
 
+
             @Override
             public void removeUpdate(DocumentEvent e) {
                 timer.restart();
             }
+
 
             @Override
             public void changedUpdate(DocumentEvent e) {
@@ -245,6 +254,7 @@ public class PreferencePanelFactory {
 
 
     private static final JFileChooser chooser = new JFileChooser();
+
 
     public static void getPreferenceEditor(final FilePreference preference,
                                            final JComponent component,
@@ -271,6 +281,7 @@ public class PreferencePanelFactory {
                 int choice = chooser.showOpenDialog(component);
                 if (choice == JFileChooser.APPROVE_OPTION) {
                     field.setText(chooser.getSelectedFile().getAbsolutePath());
+                    preference.put(chooser.getSelectedFile());
                     onFocusLost.actionPerformed(new ActionEvent(preference, ActionEvent.ACTION_PERFORMED, "File Choosen"));
                 }
             }
@@ -306,10 +317,12 @@ public class PreferencePanelFactory {
                 timer.restart();
             }
 
+
             @Override
             public void removeUpdate(DocumentEvent e) {
                 timer.restart();
             }
+
 
             @Override
             public void changedUpdate(DocumentEvent e) {
@@ -318,6 +331,7 @@ public class PreferencePanelFactory {
         });
 
     }
+
 
     public static void addFocusLostAction(final JComponent component, final Action action, final Object obj) {
 

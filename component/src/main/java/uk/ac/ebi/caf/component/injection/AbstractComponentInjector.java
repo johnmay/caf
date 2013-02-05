@@ -11,20 +11,20 @@ import java.lang.reflect.Method;
  * @author $Author$ (this version)
  * @version $Rev$
  */
-public abstract class AbstractComponentInjector {
+public abstract class AbstractComponentInjector implements ComponentInjector {
 
     private static final Logger LOGGER = Logger.getLogger(AbstractComponentInjector.class);
 
     public void inject(Object object) {
 
         if (object == null)
-            return;
+            throw new NullPointerException("Null object passed to ");
 
         inject(object.getClass(), object.getClass(), object);
 
     }
 
-    public void inject(Class root, Class current, Object object) {
+    private void inject(Class root, Class current, Object object) {
 
         for (Field field : current.getDeclaredFields()) {
             if (field.isAnnotationPresent(Inject.class)) {
@@ -34,10 +34,9 @@ public abstract class AbstractComponentInjector {
 
         Class parent = current.getSuperclass();
 
-        if (parent != Object.class) {
+        if (parent != null && parent != Object.class) {
             inject(root, parent, object);
         }
-
 
     }
 
@@ -53,6 +52,12 @@ public abstract class AbstractComponentInjector {
             field.setAccessible(true);
             JComponent component = (JComponent) field.get(object);
             field.setAccessible(false);
+
+            // don't inject null components
+            if (component == null) {
+                LOGGER.error("Injection attempted on uninitialised field - " + field);
+                return;
+            }
 
             // inject the information
             inject(c, component, name);
@@ -107,7 +112,5 @@ public abstract class AbstractComponentInjector {
     protected static void setSelectedIcon(JComponent component, Icon icon) {
         AbstractComponentInjector.invoke(component, "setSelectedIcon", icon);
     }
-
-    public abstract void inject(Class c, JComponent component, String fieldName);
 
 }

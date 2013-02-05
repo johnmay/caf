@@ -1,0 +1,18 @@
+GenerateStructureDiagram:
+    info:
+        text:    Generates a Structure Diagram
+        tooltip: Uses the Chemistry Development Kit's (CDK) StructureDiagramGenerator
+                 to assign 2D coordinates to a molecule.
+        icon:    trollface.png
+        active:  false
+    okay:
+        text:    Generate
+    overwriteLabel:
+        text:    Overwrite Existing Coordinates
+        tooltip: Overwrites any existing 2D coordinates in a molecule (<b>not recommended</b>). 
+                 A new structure diagram (coordinates) will be generated and will likely be
+                 different from the previous coordinates. If the molecule contains
+                 a chiral centre is recommended you do not generate coordinates using
+                 this tool as chiral centres are not respected.
+                           
+        
