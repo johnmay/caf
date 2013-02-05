@@ -105,8 +105,6 @@ public class ActionProperties extends Properties {
 
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
 
-        System.out.println(loader.getResource(path));
-
         try {
             return loader.getResources(path);
         } catch (IOException ex) {
