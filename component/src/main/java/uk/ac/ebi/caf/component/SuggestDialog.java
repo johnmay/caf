@@ -97,8 +97,7 @@ public class SuggestDialog extends JDialog {
 
     @Override
     public void setVisible(boolean visible) {
-        boolean hasSuggestions = list.getModel().getSize() != 0;
-        super.setVisible(visible && hasSuggestions);
+        super.setVisible(visible && model.getSize() > 0);
     }
 
     public boolean hasSelection() {
@@ -157,7 +156,8 @@ public class SuggestDialog extends JDialog {
 
     public void clear(){
         model.clear();
-        super.setVisible(false);
+        setVisible(false);
+        dispose();
     }
 
 }

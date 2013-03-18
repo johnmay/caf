@@ -28,6 +28,8 @@ public class SuggestionField extends JTextField {
     private SuggestDialog      dialog;
     private DocumentListener   listener;
     private ReplacementHandler replacementHandler;
+    private Window             window;
+    private SuggestionHandler  suggestionHandler;
 
     private boolean suggest = true;
 
@@ -38,6 +40,7 @@ public class SuggestionField extends JTextField {
 
 
         this.replacementHandler = replacementHandler;
+        this.suggestionHandler  = suggestionHandler;
 
         listener = new DocumentListener() {
             @Override
@@ -147,9 +150,9 @@ public class SuggestionField extends JTextField {
     }
 
     public void clear() {
-        dialog.clear();
         getDocument().removeDocumentListener(listener);
         setText("");
+        dialog.clear();
         getDocument().addDocumentListener(listener);
     }
 
