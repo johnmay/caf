@@ -25,6 +25,7 @@ public class SuggestDialog extends JDialog {
     private JTextField        component;
     private Window            window;
     private JList             list;
+    private DefaultListModel  model;
     private JScrollPane       pane;
     private SuggestionHandler handler;
 
@@ -39,7 +40,8 @@ public class SuggestDialog extends JDialog {
         setFocusableWindowState(false);
         setAlwaysOnTop(true);
 
-        list = new JList(new DefaultListModel());
+        model = new DefaultListModel();
+        list = new JList(model);
         list.setVisibleRowCount(5);
         list.setBackground(component.getBackground());
         list.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
@@ -47,7 +49,7 @@ public class SuggestDialog extends JDialog {
         prepareRenderer(renderer);
         list.setCellRenderer(renderer);
 
-        JScrollPane pane = new JScrollPane(list);
+        pane = new JScrollPane(list);
         add(pane);
 
         this.window = window;
@@ -87,6 +89,7 @@ public class SuggestDialog extends JDialog {
             p.y += component.getHeight();
             setLocation(p);
             setSize(component.getWidth(), list.getPreferredScrollableViewportSize().height);
+            pane.setSize(component.getWidth(), list.getPreferredScrollableViewportSize().height);
         } catch (Exception ex) {
             // probably because the component wasn't visible
         }
@@ -150,6 +153,11 @@ public class SuggestDialog extends JDialog {
         } else {
             list.removeSelectionInterval(0, max);
         }
+    }
+
+    public void clear(){
+        model.clear();
+        super.setVisible(false);
     }
 
 }

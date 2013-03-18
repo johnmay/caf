@@ -146,6 +146,13 @@ public class SuggestionField extends JTextField {
         }
     }
 
+    public void clear() {
+        dialog.clear();
+        getDocument().removeDocumentListener(listener);
+        setText("");
+        getDocument().addDocumentListener(listener);
+    }
+
     public static void main(String[] args) {
         JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
