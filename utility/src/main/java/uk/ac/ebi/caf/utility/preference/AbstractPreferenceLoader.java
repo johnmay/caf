@@ -156,7 +156,7 @@ public abstract class AbstractPreferenceLoader extends Properties {
                                         getProperty(key + KEY_JOIN + DESCRIPTION));
         }
 
-        if (type.equals("Incremental")) {
+        else if (type.equals("Incremental")) {
 
             Long value = Long.parseLong(getProperty(key + KEY_JOIN + DEFAULT));
 
@@ -168,7 +168,7 @@ public abstract class AbstractPreferenceLoader extends Properties {
                                              getProperty(key + KEY_JOIN + DESCRIPTION));
         }
 
-        if (type.equals("Integer")) {
+        else if (type.equals("Integer")) {
 
             Integer value = Integer.parseInt(getProperty(key + KEY_JOIN + DEFAULT));
 
@@ -179,7 +179,7 @@ public abstract class AbstractPreferenceLoader extends Properties {
                                          getProperty(key + KEY_JOIN + NAME),
                                          getProperty(key + KEY_JOIN + DESCRIPTION));
         }
-        if (type.equals("Double")) {
+        else if (type.equals("Double")) {
 
             Double value = Double.parseDouble(getProperty(key + KEY_JOIN + DEFAULT));
 
@@ -191,7 +191,7 @@ public abstract class AbstractPreferenceLoader extends Properties {
                                         getProperty(key + KEY_JOIN + DESCRIPTION));
         }
 
-        if (type.equals("List")) {
+        else if (type.equals("List")) {
 
             List<String> value = ListPreference.unwrap(getProperty(key + KEY_JOIN + DEFAULT));
 
@@ -202,7 +202,7 @@ public abstract class AbstractPreferenceLoader extends Properties {
                                       getProperty(key + KEY_JOIN + NAME),
                                       getProperty(key + KEY_JOIN + DESCRIPTION));
         }
-        if (type.equals("File")) {
+        else if (type.equals("File")) {
 
             File value = new File(getProperty(key + KEY_JOIN + DEFAULT));
 
@@ -212,6 +212,17 @@ public abstract class AbstractPreferenceLoader extends Properties {
                                       key,
                                       getProperty(key + KEY_JOIN + NAME),
                                       getProperty(key + KEY_JOIN + DESCRIPTION));
+        }
+        else if (type.equals("Boolean")) {
+
+            Boolean value = Boolean.parseBoolean(getProperty(key + KEY_JOIN + DEFAULT));
+
+            return new BooleanPreference(value,
+                                         scope,
+                                         getProperty(key + KEY_JOIN + CATEGORY),
+                                         key,
+                                         getProperty(key + KEY_JOIN + NAME),
+                                         getProperty(key + KEY_JOIN + DESCRIPTION));
         }
 
         throw new UnsupportedOperationException("Unsupported preference type for key:" + key);

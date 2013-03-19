@@ -29,6 +29,7 @@ import com.jgoodies.forms.layout.Sizes;
 import org.apache.log4j.Logger;
 import uk.ac.ebi.caf.component.theme.ComponentPreferences;
 import uk.ac.ebi.caf.utility.preference.Preference;
+import uk.ac.ebi.caf.utility.preference.type.BooleanPreference;
 import uk.ac.ebi.caf.utility.preference.type.FilePreference;
 import uk.ac.ebi.caf.utility.preference.type.IntegerPreference;
 import uk.ac.ebi.caf.utility.preference.type.StringPreference;
@@ -140,7 +141,38 @@ public class PreferencePanelFactory {
             getPreferenceEditor((IntegerPreference) preference, component, onFocusLost, layout);
         } else if (preference instanceof FilePreference) {
             getPreferenceEditor((FilePreference) preference, component, onFocusLost, layout);
+        } else if (preference instanceof BooleanPreference) {
+            getPreferenceEditor((BooleanPreference) preference, component, onFocusLost, layout);
         }
+    }
+
+    public static void getPreferenceEditor(final BooleanPreference preference,
+                                           JComponent component,
+                                           Action onFocusLost,
+                                           FormLayout layout) {
+
+        final JLabel label = LabelFactory.newFormLabel(preference.getName(),
+                                                       preference.getDescription());
+
+
+        final JCheckBox active = new JCheckBox();
+
+        active.setSelected(preference.get());
+
+        component.add(label, cc.xy(1, layout.getRowCount()));
+        component.add(active, cc.xy(3, layout.getRowCount()));
+        layout.appendRow(new RowSpec(Sizes.DLUY4));
+        layout.appendRow(new RowSpec(Sizes.PREFERRED));
+
+
+        active.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                preference.put(active.isSelected());
+            }
+        });
+
+        addFocusLostAction(active, onFocusLost, preference);
     }
 
 
@@ -166,6 +198,8 @@ public class PreferencePanelFactory {
                                                                 1);
 
         final JSpinner spinner = new JSpinner(model);
+
+        spinner.setEditor(new JSpinner.NumberEditor(spinner, "#"));
 
         // spinner.setPreferredSize(new Dimension(64, spinner.getPreferredSize().height));
 
