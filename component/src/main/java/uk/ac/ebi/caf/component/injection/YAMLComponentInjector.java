@@ -45,8 +45,6 @@ public class YAMLComponentInjector
 
         if (isValid(data)) {
             map = (Map<String, Map<String, Map<String, String>>>) data;
-
-            System.out.println(map.getClass());
         } else {
             throw new InvalidParameterException("Map<String,Map<String,String>> expected in yaml file");
         }
@@ -93,6 +91,7 @@ public class YAMLComponentInjector
         if (map.containsKey(c.getSimpleName())) {
             Map<String, Map<String, String>> valueMap = map.get(c.getSimpleName());
             if (valueMap.containsKey(fieldName)) {
+
                 Map<String, String> properties = valueMap.get(fieldName);
 
                 if (properties.containsKey("text")) {

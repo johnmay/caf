@@ -51,6 +51,11 @@ public class ResourceUtility {
 
         String packageName = root.getPackage().getName();
 
+        if(path.startsWith("/"))
+            return getIcon(path);
+
+        // path is probably relative... add our package
+
         // File.separator should not be used as this is an internal resource path
         return getIcon("/" + packageName.replaceAll("\\.", "/") + "/" + path);
 

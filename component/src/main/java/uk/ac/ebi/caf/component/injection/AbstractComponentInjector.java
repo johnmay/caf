@@ -98,6 +98,8 @@ public abstract class AbstractComponentInjector implements ComponentInjector {
             ((JLabel) component).setText(text);
         } else if (component instanceof AbstractButton) {
             ((AbstractButton) component).setText(text);
+        } else if (component instanceof JTextArea) {
+            ((JTextArea) component).setText(text);
         }
     }
 
