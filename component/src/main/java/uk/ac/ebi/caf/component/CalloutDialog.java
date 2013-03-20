@@ -31,7 +31,7 @@ public class CalloutDialog
     private ComponentAdapter anchorListener = new ComponentAdapter() {
         @Override
         public void componentMoved(ComponentEvent componentEvent) {
-            setLocation();
+            place();
         }
     };
 
@@ -68,7 +68,7 @@ public class CalloutDialog
             @Override
             public void componentResized(ComponentEvent componentEvent) {
                 if(anchor != null){
-                    setLocation();
+                    place();
                 }
             }
         });
@@ -77,7 +77,10 @@ public class CalloutDialog
 
     }
 
-    private void setLocation(){
+    /**
+     * Place the dialog on the screen based on the anchor location
+     */
+    public void place(){
         Point point = anchor.getLocationOnScreen();
         int x = point.x + (anchor.getWidth() / 2) ;
         int y = point.y + (anchor.getHeight() / 2);
@@ -89,7 +92,7 @@ public class CalloutDialog
     }
 
     public void setAnchor(JComponent anchor){
-        if(anchor != null){
+        if(this.anchor != null){
             SwingUtilities.getWindowAncestor(anchor).removeComponentListener(anchorListener);
         }
         this.anchor = anchor;

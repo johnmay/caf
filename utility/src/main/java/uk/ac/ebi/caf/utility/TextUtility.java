@@ -48,6 +48,11 @@ public class TextUtility {
         return sb.append("<html>").append(text).append("</html>").toString();
     }
 
+    public static final String p(String text) {
+        StringBuilder sb = new StringBuilder(text.length() + 8);
+        return sb.append("<p>").append(text).append("</p>").toString();
+    }
+
 
     public static void setClipboard(String contents) {
         StringSelection stringSelection = new StringSelection(contents);

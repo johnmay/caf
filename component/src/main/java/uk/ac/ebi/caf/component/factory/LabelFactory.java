@@ -113,7 +113,7 @@ public class LabelFactory {
      * @return
      */
     public static JLabel newHTMLLabel(String text) {
-        return newLabel(TextUtility.html(text));
+        return newLabel(TextUtility.html(TextUtility.p(text)));
     }
 
 
