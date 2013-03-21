@@ -33,7 +33,14 @@ public class SuggestionField extends JTextField {
 
     private boolean suggest = true;
 
+
     public SuggestionField(Window window, int col,
+                           SuggestionHandler suggestionHandler,
+                           ReplacementHandler replacementHandler) {
+        this(window, col, 5, suggestionHandler, replacementHandler);
+    }
+
+    public SuggestionField(Window window, int col, int nVisibleRows,
                            SuggestionHandler suggestionHandler,
                            ReplacementHandler replacementHandler) {
         super(col);
@@ -67,7 +74,7 @@ public class SuggestionField extends JTextField {
         setFont(ThemeManager.getInstance().getTheme().getBodyFont());
         setForeground(ThemeManager.getInstance().getTheme().getForeground());
 
-        dialog = new SuggestDialog(window, this, suggestionHandler);
+        dialog = new SuggestDialog(window, this, nVisibleRows, suggestionHandler);
 
         getInputMap().put(KeyStroke.getKeyStroke("DOWN"), new AbstractAction() {
             @Override

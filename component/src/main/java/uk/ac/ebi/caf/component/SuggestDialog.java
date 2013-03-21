@@ -31,6 +31,7 @@ public class SuggestDialog extends JDialog {
 
     public SuggestDialog(Window window,
                          JTextField component,
+                         int nVisibleRows,
                          SuggestionHandler handler) {
 
         super(window);
@@ -42,7 +43,7 @@ public class SuggestDialog extends JDialog {
 
         model = new DefaultListModel();
         list = new JList(model);
-        list.setVisibleRowCount(5);
+        list.setVisibleRowCount(nVisibleRows);
         list.setBackground(component.getBackground());
         list.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         ListCellRenderer renderer = handler.getRenderer();
