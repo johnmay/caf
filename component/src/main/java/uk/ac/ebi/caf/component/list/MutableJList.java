@@ -114,7 +114,7 @@ public class MutableJList<E> extends GenericJList<E> {
      * It may be possible to get the selected value after the drop but to
      * be safe we store it separately
      */
-    private class TransferableElement {
+    private static class TransferableElement {
 
         private MutableJList source;
         private Object element;
