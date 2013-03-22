@@ -38,12 +38,12 @@
         <snapshotRepository>
             <id>ebi-repo-snapshots</id>
             <name>EBI Snapshots Repoistory</name>
-            <url>${ebi.maven.repo.snapshots.deploy.url}</url>
+            <url>${ebi.repo.snapshots.nexus.url}</url>
         </snapshotRepository>  
         <repository>
             <id>ebi-repo</id>
             <name>EBI Repoistory</name>
-            <url>${ebi.maven.repo.deploy.url}</url>
+            <url>${ebi.repo.nexus.url}}</url>
         </repository>
     </distributionManagement>
     
