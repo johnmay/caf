@@ -43,7 +43,7 @@
         <repository>
             <id>ebi-repo</id>
             <name>EBI Repoistory</name>
-            <url>${ebi.repo.nexus.url}}</url>
+            <url>${ebi.repo.nexus.url}</url>
         </repository>
     </distributionManagement>
     
