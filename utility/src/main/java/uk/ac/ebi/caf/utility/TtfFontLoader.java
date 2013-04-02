@@ -79,7 +79,7 @@ public final class TtfFontLoader {
         TextLayout layout = new TextLayout(text, font, context);
         Rectangle2D bounds = layout.getBounds();
 
-        int longestSide = (int) Math.max(bounds.getWidth(), bounds.getHeight());
+        int longestSide = (int) Math.ceil(Math.max(bounds.getWidth(), bounds.getHeight()));
 
         BufferedImage img = new BufferedImage(longestSide,
                                               longestSide,
@@ -90,7 +90,7 @@ public final class TtfFontLoader {
         g2.setColor(color);
         g2.setFont(font);
 
-        int x = -(int) bounds.getX();
+        int x = 0;
         int y = (int) ((img.getHeight() / 2) - (bounds.getHeight() / 2) - bounds
                 .getY());
 

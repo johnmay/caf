@@ -1,6 +1,8 @@
 package uk.ac.ebi.caf.utility;
 
 import org.junit.Test;
+import uk.ac.ebi.caf.utility.font.EBIFont;
+import uk.ac.ebi.caf.utility.font.EBIIcon;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -31,5 +33,14 @@ public class TtfFontLoaderTest {
 
     @Test public void demo() {
         TtfFontLoader.load("uk/ac/ebi/caf/utility/EBI-Chemistry.ttf").create('U').icon();
+    }
+
+    public static void main(String[] args) {
+
+        JFrame frame = new JFrame();
+        frame.add(new JLabel(EBIIcon.FASTA.create().size(18f).icon()));
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.pack();
+        frame.setVisible(true);
     }
 }
