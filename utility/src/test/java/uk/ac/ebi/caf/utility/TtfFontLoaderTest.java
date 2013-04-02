@@ -38,7 +38,7 @@ public class TtfFontLoaderTest {
     public static void main(String[] args) {
 
         JFrame frame = new JFrame();
-        frame.add(new JLabel(EBIIcon.FASTA.create().size(18f).icon()));
+        frame.add(new JLabel(EBIIcon.FASTA.create().size(22f).highlight().icon()));
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);

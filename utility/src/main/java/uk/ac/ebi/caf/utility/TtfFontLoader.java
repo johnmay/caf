@@ -79,7 +79,8 @@ public final class TtfFontLoader {
         TextLayout layout = new TextLayout(text, font, context);
         Rectangle2D bounds = layout.getBounds();
 
-        int longestSide = (int) Math.ceil(Math.max(bounds.getWidth(), bounds.getHeight()));
+        int longestSide = (int) Math.ceil(Math.max(bounds.getWidth(), bounds
+                .getHeight()));
 
         BufferedImage img = new BufferedImage(longestSide,
                                               longestSide,
@@ -90,11 +91,44 @@ public final class TtfFontLoader {
         g2.setColor(color);
         g2.setFont(font);
 
-        int x = 0;
-        int y = (int) ((img.getHeight() / 2) - (bounds.getHeight() / 2) - bounds
-                .getY());
+        float cx = (float) (longestSide / 2 - bounds.getWidth() / 2);
+        float cy = (float) (longestSide / 2 - bounds.getHeight() / 2);
+        float ox = cx - (float) bounds.getX();
+        float oy = cy - (float) bounds.getY();
 
-        g2.drawString(text, x, y);
+        g2.setColor(color);
+        g2.drawString(text, ox, oy);
+        g2.dispose();
+        return img;
+    }
+
+
+    private static BufferedImage createWithLightShadow(char codepoint, Font font, Color color, Color shadow) {
+        String text = Character.toString(codepoint);
+        FontRenderContext context = new FontRenderContext(new AffineTransform(), true, false);
+        TextLayout layout = new TextLayout(text, font, context);
+        Rectangle2D bounds = layout.getBounds();
+
+        int longestSide = 2 + (int) Math.ceil(Math.max(bounds.getWidth(), bounds
+                .getHeight()));
+
+        BufferedImage img = new BufferedImage(longestSide,
+                                              longestSide,
+                                              BufferedImage.TYPE_4BYTE_ABGR);
+        Graphics2D g2 = img.createGraphics();
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        g2.setFont(font);
+
+        float cx = (float) (longestSide / 2 - bounds.getWidth() / 2);
+        float cy = (float) (longestSide / 2 - bounds.getHeight() / 2);
+        float ox = cx - (float) bounds.getX();
+        float oy = cy - (float) bounds.getY();
+
+        g2.setColor(shadow);
+        g2.drawString(text, ox, oy + 1);
+        g2.setColor(color);
+        g2.drawString(text, ox, oy);
         g2.dispose();
         return img;
     }
@@ -105,6 +139,8 @@ public final class TtfFontLoader {
     public static class IconBuilder {
         private char codepoint;
         private Font font;
+        private boolean shadow = false;
+        private Color shadowColor;
         private Color color = new Color(0x444444);
 
         /**
@@ -131,6 +167,28 @@ public final class TtfFontLoader {
         }
 
         /**
+         * A 1px drop shadow (white).
+         *
+         * @return reference for method chaining
+         */
+        public IconBuilder highlight() {
+            this.shadow = true;
+            this.shadowColor = Color.WHITE;
+            return this;
+        }
+
+        /**
+         * A 1px drop shadow (black).
+         *
+         * @return reference for method chaining
+         */
+        public IconBuilder lowlight() {
+            this.shadow = true;
+            this.shadowColor = Color.BLACK;
+            return this;
+        }
+
+        /**
          * Change the foreground color of the created icon.
          *
          * @param color new foreground color
@@ -149,7 +207,9 @@ public final class TtfFontLoader {
          * @return new buffered image
          */
         public BufferedImage image() {
-            return create(codepoint, font, color);
+            return shadow
+                   ? createWithLightShadow(codepoint, font, color, shadowColor)
+                   : create(codepoint, font, color);
         }
 
         /**
@@ -173,7 +233,8 @@ public final class TtfFontLoader {
      *                                  FontFormatException occurred
      */
     public static TtfFontLoader load(String path) {
-        checkArgument(!path.startsWith("/"), "path should not start with a leading slash");
+        checkArgument(!path
+                .startsWith("/"), "path should not start with a leading slash");
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
         InputStream in = loader.getResourceAsStream(path);
         try {
