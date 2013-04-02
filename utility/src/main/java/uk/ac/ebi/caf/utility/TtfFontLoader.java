@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
@@ -84,6 +85,7 @@ public final class TtfFontLoader {
                                               longestSide,
                                               BufferedImage.TYPE_4BYTE_ABGR);
         Graphics2D g2 = img.createGraphics();
+        g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2.setColor(color);
         g2.setFont(font);
 
