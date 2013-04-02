@@ -148,7 +148,7 @@ public class PreferencePanelFactory {
 
     public static void getPreferenceEditor(final BooleanPreference preference,
                                            JComponent component,
-                                           Action onFocusLost,
+                                           final Action onFocusLost,
                                            FormLayout layout) {
 
         final JLabel label = LabelFactory.newFormLabel(preference.getName(),
@@ -169,10 +169,12 @@ public class PreferencePanelFactory {
             @Override
             public void stateChanged(ChangeEvent e) {
                 preference.put(active.isSelected());
+                onFocusLost.actionPerformed(new ActionEvent(active,
+                                                       ActionEvent.ACTION_PERFORMED,
+                                                       "Object state updated"));
+
             }
         });
-
-        addFocusLostAction(active, onFocusLost, preference);
     }
 
 
