@@ -28,4 +28,8 @@ public class TtfFontLoaderTest {
     public void nullColor() {
         TtfFontLoader.load("uk/ac/ebi/caf/utility/EBI-Chemistry.ttf").create('U').color(null);
     }
+
+    @Test public void demo() {
+        TtfFontLoader.load("uk/ac/ebi/caf/utility/EBI-Chemistry.ttf").create('U').icon();
+    }
 }
