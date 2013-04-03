@@ -140,8 +140,6 @@ public class IconBuilder {
             g2.drawString(text, ox, oy + 1);
         }
 
-        g2.draw(bounds);
-
         g2.setColor(color);
         g2.drawString(text, ox, oy);
 
