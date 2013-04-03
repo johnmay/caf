@@ -218,7 +218,7 @@ public enum EBIIcon implements IconFont {
      *
      * @return new icon
      */
-    @Override public TtfFontLoader.IconBuilder create() {
+    @Override public IconBuilder create() {
         return delegate.create();
     }
 }

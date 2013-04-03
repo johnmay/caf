@@ -7,6 +7,6 @@ import uk.ac.ebi.caf.utility.TtfFontLoader;
  */
 public interface IconFont {
 
-    public TtfFontLoader.IconBuilder create();
+    public IconBuilder create();
 
 }

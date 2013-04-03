@@ -15,7 +15,7 @@ public class IconFontDelegate implements IconFont {
         this.codepoint = codepoint;
     }
 
-    public TtfFontLoader.IconBuilder create() {
+    public IconBuilder create() {
         return loader.create(codepoint);
     }
 
