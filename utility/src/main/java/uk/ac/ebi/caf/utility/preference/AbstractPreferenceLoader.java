@@ -143,7 +143,7 @@ public abstract class AbstractPreferenceLoader extends Properties {
             throw new UnsupportedOperationException("Unable to load preference for key:" + key);
         }
 
-        Preferences scope = scopeType.equals("User") ? getUserApplicationNode() : getSystemApplicationNode();
+        Preferences scope = scopeType.equalsIgnoreCase("user") ? getUserApplicationNode() : getSystemApplicationNode();
 
         if (type.equals("String")) {
 
