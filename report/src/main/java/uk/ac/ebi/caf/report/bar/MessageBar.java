@@ -37,6 +37,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.Stack;
 
 
@@ -76,7 +78,7 @@ public class MessageBar
 
     private JLabel label = LabelFactory.newLabel("");
 
-    private Stack<Report> stack = new Stack();
+    private Deque<Report> stack = new ArrayDeque<Report>();
 
 
     public MessageBar() {
@@ -162,13 +164,21 @@ public class MessageBar
 
 
         public CopyPopup() {
-            menu.add(new JMenuItem(new AbstractAction("CopyMessage") {
+            menu.add(new JMenuItem(new AbstractAction("Copy") {
 
                 public void actionPerformed(ActionEvent e) {
                     if (!stack.isEmpty()) {
                         TextUtility.setClipboard(stack.peek().getMessage());
                     }
                     menu.setVisible(false);
+                }
+            }));
+            menu.add(new JMenuItem(new AbstractAction("Clear") {
+
+                public void actionPerformed(ActionEvent e) {
+                    stack.clear();
+                    menu.setVisible(false);
+                    setVisible(false);
                 }
             }));
         }
