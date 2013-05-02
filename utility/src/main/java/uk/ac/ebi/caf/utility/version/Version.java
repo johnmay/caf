@@ -82,7 +82,7 @@ public class Version implements Comparable<Version> {
      */
     public Version(String version) {
 
-        String[] values = split.split(version);
+        String[] values = split.split(version.replaceAll("-SNAPSHOT", ""));
         int[] base = new int[]{0, 0, 0, 0};
         for (int i = 0; i < values.length; i++) {
             base[i] = Integer.parseInt(values[i]);
