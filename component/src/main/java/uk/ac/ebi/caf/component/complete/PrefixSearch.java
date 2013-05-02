@@ -145,7 +145,22 @@ public class PrefixSearch {
         }
     }
 
+    /**
+     * A prefix search for ChEBI compound names.
+     *
+     * @return prefix search for english words
+     */
+    public static PrefixSearch chebi() {
+        try {
+            return fromGZStream(PrefixSearch.class.getResourceAsStream(CHEBI_NAMES));
+        } catch (IOException e) {
+            throw new IllegalStateException(CHEBI_NAMES + " could not be loaded");
+        }
+    }
+
+
     private static final String ENGLISH_WORDS = "wordsEn.txt.gz";
+    private static final String CHEBI_NAMES = "chebi-names.gz";
 
     private static class Node {
         private Node lo, eq, hi;
