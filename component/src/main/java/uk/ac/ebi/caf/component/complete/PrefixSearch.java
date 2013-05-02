@@ -8,11 +8,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.zip.GZIPInputStream;
 
 /**
- * Ternary search tree structure for finding words with a give prefix.
+ * Ternary search tree structure for finding words with a give prefix. Searches
+ * are case insensitive.
+ *
  * @author John May */
 public class PrefixSearch {
 
@@ -23,7 +24,7 @@ public class PrefixSearch {
      *
      * @param strs collection of strings
      */
-    public PrefixSearch(Collection<String> strs) {
+    private PrefixSearch(Collection<String> strs) {
         for (String str : strs)
             add(str);
     }
@@ -35,7 +36,7 @@ public class PrefixSearch {
      */
     public void add(String str) {
         if (str != null && !str.isEmpty())
-            root = add(root, str.toLowerCase(Locale.ENGLISH), str, 0);
+            root = add(root, str, 0);
     }
 
     /**
@@ -47,37 +48,37 @@ public class PrefixSearch {
     public Collection<String> startsWith(String prefix) {
         if (prefix == null || prefix.isEmpty())
             return Collections.emptySet();
-        Node n = get(root, prefix.toLowerCase(Locale.ENGLISH), 0);
+        Node n = get(root, prefix, 0);
         List<String> words = new ArrayList<String>();
-        if(n != null) collect(n.middle, words, prefix);
+        if(n != null) collect(n.eq, words, prefix);
         return words;
     }
 
-    private Node add(Node n, String key, String str, int d) {
-        char c = key.charAt(d);
+    private Node add(Node n, String org, int d) {
+        char c = Character.toLowerCase(org.charAt(d));
         if(n == null) n = new Node(c);
-        if      (c < n.c)              n.left   = add(n.left, key, str, d);
-        else if (c > n.c)              n.right  = add(n.right, key, str, d);
-        else if (d < str.length() - 1) n.middle = add(n.middle, key, str, d + 1);
-        else n.word = str;
+        if      (c < n.c)              n.lo = add(n.lo, org, d);
+        else if (c > n.c)              n.hi = add(n.hi, org, d);
+        else if (d < org.length() - 1) n.eq = add(n.eq, org, d + 1);
+        else n.word = org;
         return n;
     }
 
     private Node get(Node n, String str, int d) {
         if(n == null) return null;
-        char c = str.charAt(d);
-        if      (c < n.c) return get(n.left, str, d);
-        else if (c > n.c) return get(n.right, str, d);
-        else if (d < str.length() - 1) return get(n.middle, str, d + 1);
+        char c = Character.toLowerCase(str.charAt(d));
+        if      (c < n.c) return get(n.lo, str, d);
+        else if (c > n.c) return get(n.hi, str, d);
+        else if (d < str.length() - 1) return get(n.eq, str, d + 1);
         else return n;
     }
 
     private void collect(Node n, Collection<String> values, String prefix) {
         if(n == null) return;
         if(n.word != null) values.add(n.word);
-        collect(n.left,   values, prefix);
-        collect(n.middle, values, prefix + n.c);
-        collect(n.right,  values, prefix);
+        collect(n.lo, values, prefix);
+        collect(n.eq, values, prefix + n.c);
+        collect(n.hi, values, prefix);
     }
 
     /**
@@ -96,9 +97,7 @@ public class PrefixSearch {
             while ((line = reader.readLine()) != null) {
                 words.add(line);
             }
-            // sorted order is worst
-            Collections.shuffle(words);
-            return new PrefixSearch(words);
+            return forStrings(words);
         } finally {
             if (in != null) in.close();
         }
@@ -121,6 +120,19 @@ public class PrefixSearch {
     }
 
     /**
+     * Create a prefix search for a list of strings. The strings are first
+     * shuffled to avoid worst case insertion.
+     *
+     * @param xs list of strings
+     * @return prefix search
+     */
+    public static PrefixSearch forStrings(List<String> xs) {
+        // sorted order is worst
+        Collections.shuffle(xs);
+        return new PrefixSearch(xs);
+    }
+
+    /**
      * A prefix search for english words.
      *
      * @return prefix search for english words
@@ -136,7 +148,7 @@ public class PrefixSearch {
     private static final String ENGLISH_WORDS = "wordsEn.txt.gz";
 
     private static class Node {
-        private Node left, middle, right;
+        private Node lo, eq, hi;
         private final char c;
         private String word;
 
