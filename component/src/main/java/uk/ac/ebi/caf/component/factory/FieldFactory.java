@@ -25,6 +25,9 @@ import org.apache.log4j.Logger;
 import uk.ac.ebi.caf.component.theme.Theme;
 import uk.ac.ebi.caf.component.theme.ThemeManager;
 
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+
 
 /**
  *          FieldFactory - 2011.11.17 <br>
@@ -41,18 +44,28 @@ public class FieldFactory {
 
 
     public static JTextField newField(int columns) {
-        JTextField field = new JTextField();
+        final JTextField field = new JTextField();
         field.setFont(theme.getBodyFont());
         field.setForeground(theme.getForeground());
         field.setColumns(columns);
+        field.addFocusListener(new FocusAdapter() {
+            @Override public void focusGained(FocusEvent e) {
+                field.setSelectionStart(field.getSelectionEnd());
+            }
+        });
         return field;
     }
 
 
     public static JTextField newField(String text) {
-        JTextField field = new JTextField(text);
+        final JTextField field = new JTextField(text);
         field.setFont(theme.getBodyFont());
         field.setForeground(theme.getForeground());
+        field.addFocusListener(new FocusAdapter() {
+            @Override public void focusGained(FocusEvent e) {
+                field.setSelectionStart(field.getSelectionEnd());
+            }
+        });
         return field;
     }
 
