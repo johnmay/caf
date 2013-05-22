@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
 
@@ -14,7 +15,8 @@ import java.util.zip.GZIPInputStream;
  * Ternary search tree structure for finding words with a give prefix. Searches
  * are case insensitive.
  *
- * @author John May */
+ * @author John May
+ */
 public class PrefixSearch {
 
     private Node root;
@@ -35,47 +37,59 @@ public class PrefixSearch {
      * @param str a word
      */
     public void add(String str) {
-        if (str != null && !str.isEmpty())
-            root = add(root, str, 0);
+        if (str != null && !str.isEmpty()) root = add(root, str, 0);
     }
 
     /**
      * Find words starting with the given prefix.
      *
      * @param prefix a prefix
+     *
      * @return words starting with the prefix
      */
-    public Collection<String> startsWith(String prefix) {
-        if (prefix == null || prefix.isEmpty())
-            return Collections.emptySet();
+    public List<String> startsWith(String prefix) {
+        if (prefix == null || prefix.isEmpty()) return Collections.emptyList();
         Node n = get(root, prefix, 0);
         List<String> words = new ArrayList<String>();
-        if(n != null) collect(n.eq, words, prefix);
+        if (n != null && n.word != null) words.add(n.word);
+        if (n != null) collect(n.eq, words, prefix);
         return words;
     }
 
+    /**
+     * Provides an ordering which is intuitive for suggestion. Strings are
+     * sorted first by length and then alphabetically.
+     *
+     * @return comparator for sorting suggestions
+     */
+    public static Comparator<String> suggestionOrder() {
+        return COMPARATOR;
+    }
+
+    private static Comparator<String> COMPARATOR = new MyComparator();
+
     private Node add(Node n, String org, int d) {
         char c = Character.toLowerCase(org.charAt(d));
-        if(n == null) n = new Node(c);
-        if      (c < n.c)              n.lo = add(n.lo, org, d);
-        else if (c > n.c)              n.hi = add(n.hi, org, d);
+        if (n == null) n = new Node(c);
+        if (c < n.c) n.lo = add(n.lo, org, d);
+        else if (c > n.c) n.hi = add(n.hi, org, d);
         else if (d < org.length() - 1) n.eq = add(n.eq, org, d + 1);
         else n.word = org;
         return n;
     }
 
     private Node get(Node n, String str, int d) {
-        if(n == null) return null;
+        if (n == null) return null;
         char c = Character.toLowerCase(str.charAt(d));
-        if      (c < n.c) return get(n.lo, str, d);
+        if (c < n.c) return get(n.lo, str, d);
         else if (c > n.c) return get(n.hi, str, d);
         else if (d < str.length() - 1) return get(n.eq, str, d + 1);
         else return n;
     }
 
     private void collect(Node n, Collection<String> values, String prefix) {
-        if(n == null) return;
-        if(n.word != null) values.add(n.word);
+        if (n == null) return;
+        if (n.word != null) values.add(n.word);
         collect(n.lo, values, prefix);
         collect(n.eq, values, prefix + n.c);
         collect(n.hi, values, prefix);
@@ -86,12 +100,15 @@ public class PrefixSearch {
      * the tree.
      *
      * @param in input stream
+     *
      * @return prefix search
+     *
      * @throws IOException low-level io
      */
     public static PrefixSearch fromStream(InputStream in) throws IOException {
         try {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(
+                in));
             List<String> words = new ArrayList<String>();
             String line = null;
             while ((line = reader.readLine()) != null) {
@@ -108,7 +125,9 @@ public class PrefixSearch {
      * each line is added to the tree.
      *
      * @param in compressed input stream
+     *
      * @return prefix search
+     *
      * @throws IOException low-level io
      */
     public static PrefixSearch fromGZStream(InputStream in) throws IOException {
@@ -124,6 +143,7 @@ public class PrefixSearch {
      * shuffled to avoid worst case insertion.
      *
      * @param xs list of strings
+     *
      * @return prefix search
      */
     public static PrefixSearch forStrings(List<String> xs) {
@@ -139,9 +159,11 @@ public class PrefixSearch {
      */
     public static PrefixSearch englishWords() {
         try {
-            return fromGZStream(PrefixSearch.class.getResourceAsStream(ENGLISH_WORDS));
+            return fromGZStream(PrefixSearch.class.getResourceAsStream(
+                ENGLISH_WORDS));
         } catch (IOException e) {
-            throw new IllegalStateException(ENGLISH_WORDS + " could not be loaded");
+            throw new IllegalStateException(
+                ENGLISH_WORDS + " could not be loaded");
         }
     }
 
@@ -152,23 +174,33 @@ public class PrefixSearch {
      */
     public static PrefixSearch chebi() {
         try {
-            return fromGZStream(PrefixSearch.class.getResourceAsStream(CHEBI_NAMES));
+            return fromGZStream(PrefixSearch.class.getResourceAsStream(
+                CHEBI_NAMES));
         } catch (IOException e) {
-            throw new IllegalStateException(CHEBI_NAMES + " could not be loaded");
+            throw new IllegalStateException(
+                CHEBI_NAMES + " could not be loaded");
         }
     }
 
 
     private static final String ENGLISH_WORDS = "wordsEn.txt.gz";
-    private static final String CHEBI_NAMES = "chebi-names.gz";
+    private static final String CHEBI_NAMES   = "chebi-names.gz";
 
     private static class Node {
         private Node lo, eq, hi;
-        private final char c;
-        private String word;
+        private final char   c;
+        private       String word;
 
         private Node(char c) {
             this.c = c;
+        }
+    }
+
+    static class MyComparator implements Comparator<String> {
+        @Override public int compare(String a, String b) {
+            if (a.length() < b.length()) return -1;
+            if (a.length() > b.length()) return +1;
+            return a.compareTo(b);
         }
     }
 }
