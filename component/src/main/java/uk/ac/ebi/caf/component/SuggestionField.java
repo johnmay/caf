@@ -3,19 +3,24 @@ package uk.ac.ebi.caf.component;
 import org.apache.log4j.Logger;
 import uk.ac.ebi.caf.component.theme.ThemeManager;
 
-import javax.swing.*;
+import javax.swing.AbstractAction;
+import javax.swing.JFrame;
+import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
 /**
- * SuggestionField - 24.02.2012 <br/>
- * <p/>
- * Class descriptions.
+ * SuggestionField - 24.02.2012 <br/> <p/> Class descriptions.
  *
  * @author johnmay
  * @author $Author$ (this version)
@@ -23,7 +28,8 @@ import java.util.Collection;
  */
 public class SuggestionField extends JTextField {
 
-    private static final Logger LOGGER = Logger.getLogger(SuggestionField.class);
+    private static final Logger LOGGER = Logger.getLogger(
+        SuggestionField.class);
 
     private SuggestDialog      dialog;
     private DocumentListener   listener;
@@ -34,20 +40,16 @@ public class SuggestionField extends JTextField {
     private boolean suggest = true;
 
 
-    public SuggestionField(Window window, int col,
-                           SuggestionHandler suggestionHandler,
-                           ReplacementHandler replacementHandler) {
+    public SuggestionField(Window window, int col, SuggestionHandler suggestionHandler, ReplacementHandler replacementHandler) {
         this(window, col, 5, suggestionHandler, replacementHandler);
     }
 
-    public SuggestionField(Window window, int col, int nVisibleRows,
-                           SuggestionHandler suggestionHandler,
-                           ReplacementHandler replacementHandler) {
+    public SuggestionField(Window window, int col, int nVisibleRows, SuggestionHandler suggestionHandler, ReplacementHandler replacementHandler) {
         super(col);
 
 
         this.replacementHandler = replacementHandler;
-        this.suggestionHandler  = suggestionHandler;
+        this.suggestionHandler = suggestionHandler;
 
         listener = new DocumentListener() {
             @Override
@@ -74,7 +76,8 @@ public class SuggestionField extends JTextField {
         setFont(ThemeManager.getInstance().getTheme().getBodyFont());
         setForeground(ThemeManager.getInstance().getTheme().getForeground());
 
-        dialog = new SuggestDialog(window, this, nVisibleRows, suggestionHandler);
+        dialog = new SuggestDialog(window, this, nVisibleRows,
+                                   suggestionHandler);
 
         getInputMap().put(KeyStroke.getKeyStroke("DOWN"), new AbstractAction() {
             @Override
@@ -89,35 +92,52 @@ public class SuggestionField extends JTextField {
             }
         });
         getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE,
-                                                 InputEvent.CTRL_MASK), new AbstractAction() {
+                                                 InputEvent.CTRL_MASK),
+                          new AbstractAction() {
+                              @Override
+                              public void actionPerformed(ActionEvent e) {
+
+                                  dialog.setVisible(
+                                      !dialog.isVisible()); // toggle
+
+                                  if (dialog.hasSelection()) {
+                                      handleReplacement();
+                                  }
+                              }
+                          });
+        getInputMap().put(KeyStroke.getKeyStroke("TAB"), new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
-                dialog.setVisible(!dialog.isVisible()); // toggle
-
-                if (dialog.hasSelection()) {
-                    handleReplacement();
+                if (dialog.isVisible()) {
+                    dialog.next();
+                    if (dialog.hasSelection()) {
+                        handleReplacement();
+                    }
+                    //dialog.setVisible(false);
                 }
-            }
-        });
-        getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,
-                                                 0), new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
 
-                dialog.setVisible(!dialog.isVisible()); // toggle
+            }
+        });
+        getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0),
+                          new AbstractAction() {
+                              @Override
+                              public void actionPerformed(ActionEvent e) {
 
-                if (dialog.hasSelection()) {
-                    handleReplacement();
-                }
-            }
-        });
-        getInputMap().put(KeyStroke.getKeyStroke("ESCAPE"), new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                dialog.setVisible(false);
-            }
-        });
+                                  dialog.setVisible(
+                                      !dialog.isVisible()); // toggle
+
+                                  if (dialog.hasSelection()) {
+                                      handleReplacement();
+                                  }
+                              }
+                          });
+        getInputMap().put(KeyStroke.getKeyStroke("ESCAPE"),
+                          new AbstractAction() {
+                              @Override
+                              public void actionPerformed(ActionEvent e) {
+                                  dialog.setVisible(false);
+                              }
+                          });
 
         dialog.getList().addMouseListener(new MouseAdapter() {
             @Override

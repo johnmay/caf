@@ -3,16 +3,25 @@ package uk.ac.ebi.caf.component;
 import org.apache.log4j.Logger;
 import uk.ac.ebi.caf.utility.ColorUtility;
 
-import javax.swing.*;
+import javax.swing.DefaultListModel;
+import javax.swing.JDialog;
+import javax.swing.JList;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.ListCellRenderer;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.DocumentEvent;
-import java.awt.*;
+import java.awt.AWTKeyStroke;
+import java.awt.Color;
+import java.awt.KeyboardFocusManager;
+import java.awt.Point;
+import java.awt.Window;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.util.Collections;
 
 /**
- * SuggestDialog - 24.02.2012 <br/>
- * <p/>
- * Class descriptions.
+ * SuggestDialog - 24.02.2012 <br/> <p/> Class descriptions.
  *
  * @author johnmay
  * @author $Author$ (this version)
@@ -29,10 +38,7 @@ public class SuggestDialog extends JDialog {
     private JScrollPane       pane;
     private SuggestionHandler handler;
 
-    public SuggestDialog(Window window,
-                         JTextField component,
-                         int nVisibleRows,
-                         SuggestionHandler handler) {
+    public SuggestDialog(Window window, JTextField component, int nVisibleRows, SuggestionHandler handler) {
 
         super(window);
 
@@ -40,6 +46,10 @@ public class SuggestDialog extends JDialog {
         setFocusable(false);
         setFocusableWindowState(false);
         setAlwaysOnTop(true);
+
+        this.window = window;
+        this.component = component;
+        this.handler = handler;
 
         model = new DefaultListModel();
         list = new JList(model);
@@ -53,10 +63,6 @@ public class SuggestDialog extends JDialog {
         pane = new JScrollPane(list);
         add(pane);
 
-        this.window = window;
-        this.component = component;
-        this.handler = handler;
-
 
         window.addComponentListener(new ComponentAdapter() {
             @Override
@@ -69,6 +75,12 @@ public class SuggestDialog extends JDialog {
                 reposition();
             }
         });
+
+        setFocusTraversalKeysEnabled(false);
+        setFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS,
+                              Collections.<AWTKeyStroke>emptySet());
+        setFocusTraversalKeys(KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS,
+                              Collections.<AWTKeyStroke>emptySet());
 
     }
 
@@ -89,8 +101,10 @@ public class SuggestDialog extends JDialog {
             Point p = component.getLocationOnScreen();
             p.y += component.getHeight();
             setLocation(p);
-            setSize(component.getWidth(), list.getPreferredScrollableViewportSize().height);
-            pane.setSize(component.getWidth(), list.getPreferredScrollableViewportSize().height);
+            setSize(component.getWidth(),
+                    list.getPreferredScrollableViewportSize().height);
+            pane.setSize(component.getWidth(),
+                         list.getPreferredScrollableViewportSize().height);
         } catch (Exception ex) {
             // probably because the component wasn't visible
         }
@@ -113,9 +127,7 @@ public class SuggestDialog extends JDialog {
 
         int max = list.getModel().getSize();
         int current = list.getSelectedIndex();
-        int next = current == -1
-                   ? 0
-                   : current + 1;
+        int next = current == -1 ? 0 : current + 1;
 
         if (next < max) {
             list.setSelectedIndex(next);
@@ -125,27 +137,17 @@ public class SuggestDialog extends JDialog {
     }
 
     public void prepareRenderer(ListCellRenderer renderer) {
-        if (renderer instanceof Component) {
-            Component component = (Component) renderer;
-            Font font = component.getFont();
-            component.setFont(font.deriveFont(font.getSize() * 0.8f));
-
-            list.setFont(component.getFont());
-
-            // set fg col
-            Color foreground = ColorUtility.shade(component.getForeground(), 0.4f);
-            component.setForeground(foreground);
-            list.setForeground(foreground);
-        }
+        // set fg col
+        Color foreground = ColorUtility.shade(component.getForeground(), 0.4f);
+        list.setFont(component.getFont());
+        list.setForeground(foreground);
     }
 
     public void previous() {
 
         int max = list.getModel().getSize();
         int current = list.getSelectedIndex();
-        int prev = current == -1
-                   ? max - 1
-                   : current - 1;
+        int prev = current == -1 ? max - 1 : current - 1;
 
         if (prev >= 0) {
             list.setSelectedIndex(prev);
@@ -155,7 +157,7 @@ public class SuggestDialog extends JDialog {
         }
     }
 
-    public void clear(){
+    public void clear() {
         model.clear();
         setVisible(false);
         dispose();
