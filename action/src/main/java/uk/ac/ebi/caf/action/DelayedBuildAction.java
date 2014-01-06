@@ -50,6 +50,28 @@ public abstract class DelayedBuildAction extends GeneralAction {
 
     public abstract void activateActions();
 
+    /**
+     * Build and access the component.
+     * 
+     * @return the component
+     */
+    public final Object component() {
+        if (built = false) {
+            buildComponents();
+            built = true;
+        }
+        return accessComponent();
+    }
+
+    /**
+     * Return the component which was built - note if used with {@link #component()}
+     * then the instance is already built.
+     * 
+     * @return the component
+     */
+    protected Object accessComponent() {
+        return null;
+    }
 
     public void actionPerformed(ActionEvent e) {
         if (built == false) {
