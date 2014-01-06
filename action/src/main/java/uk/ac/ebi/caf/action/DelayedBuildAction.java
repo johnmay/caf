@@ -56,7 +56,7 @@ public abstract class DelayedBuildAction extends GeneralAction {
      * @return the component
      */
     public final Object component() {
-        if (built = false) {
+        if (!built) {
             buildComponents();
             built = true;
         }
@@ -74,7 +74,7 @@ public abstract class DelayedBuildAction extends GeneralAction {
     }
 
     public void actionPerformed(ActionEvent e) {
-        if (built == false) {
+        if (!built) {
             buildComponents();
             built = true;
         }
