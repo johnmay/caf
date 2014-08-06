@@ -173,7 +173,23 @@ public class MessageBar
                     menu.setVisible(false);
                 }
             }));
-            menu.add(new JMenuItem(new AbstractAction("Clear") {
+            menu.add(new JMenuItem(new AbstractAction("Copy all") {
+
+                public void actionPerformed(ActionEvent e) {
+                    StringBuilder sb = new StringBuilder();
+                    for (Report report : stack) {
+                        sb.append(report.getLevel())
+                          .append('\t')
+                          .append(report.getMessage())
+                          .append('\n');    
+                    }
+                    if (!stack.isEmpty()) {
+                        TextUtility.setClipboard(sb.toString());
+                    }
+                    menu.setVisible(false);
+                }
+            }));
+            menu.add(new JMenuItem(new AbstractAction("Clear all messages") {
 
                 public void actionPerformed(ActionEvent e) {
                     stack.clear();
